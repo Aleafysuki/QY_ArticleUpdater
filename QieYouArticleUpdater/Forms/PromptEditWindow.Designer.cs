@@ -41,6 +41,7 @@
 			PromptText.Name = "PromptText";
 			PromptText.Size = new Size(776, 355);
 			PromptText.TabIndex = 0;
+			PromptText.TextChanged += PromptText_TextChanged;
 			// 
 			// PromptEditCancel
 			// 
@@ -59,6 +60,7 @@
 			PromptEditOK.TabIndex = 2;
 			PromptEditOK.Text = "确定";
 			PromptEditOK.UseVisualStyleBackColor = true;
+			PromptEditOK.Click += PromptEditOK_Click;
 			// 
 			// PromptDiscription
 			// 
