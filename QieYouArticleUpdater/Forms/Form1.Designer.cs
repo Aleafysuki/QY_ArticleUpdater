@@ -30,8 +30,16 @@
 		{
 			components = new System.ComponentModel.Container();
 			ArticleBox = new GroupBox();
-			SelectPosterButton = new Button();
+			groupBox1 = new GroupBox();
+			ArticlePicturePreview = new PictureBox();
+			NextPicButton = new Button();
+			PrevPicButton = new Button();
+			PictureFileNameLabel = new Label();
+			PictureInsertButton = new Button();
 			PictureEditButton = new Button();
+			PosterGroupBox = new GroupBox();
+			PosterPictureView = new PictureBox();
+			SelectPosterButton = new Button();
 			ArticleSource = new LabeledInput();
 			ArticleAuthor = new LabeledInput();
 			TextAlignButton = new Button();
@@ -59,6 +67,7 @@
 			labeledInput1 = new LabeledInput();
 			SystemBox = new GroupBox();
 			UserSignTextBox = new TextBox();
+			label2 = new Label();
 			PlatformVisibleButton = new Button();
 			menuStrip1 = new MenuStrip();
 			文件ToolStripMenuItem = new ToolStripMenuItem();
@@ -72,6 +81,7 @@
 			UploadButton = new Button();
 			ArticleGeneratorProgressBar = new ProgressBar();
 			PageProcessBox = new GroupBox();
+			ArticleGenerateLog = new ListBox();
 			label1 = new Label();
 			PageDivClassList = new ListBox();
 			PageLink = new LabeledInput();
@@ -80,7 +90,15 @@
 			ArticleClearButton = new Button();
 			LinkReloadChecker = new CheckBox();
 			ProgressBarBackground = new System.ComponentModel.BackgroundWorker();
+			PictureList = new ImageList(components);
+			ArticleUploadNow = new RadioButton();
+			ArticleUploadLater = new RadioButton();
+			ArticleAsDraft = new CheckBox();
 			ArticleBox.SuspendLayout();
+			groupBox1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)ArticlePicturePreview).BeginInit();
+			PosterGroupBox.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)PosterPictureView).BeginInit();
 			AIBox.SuspendLayout();
 			PromptListMenu.SuspendLayout();
 			CaptureBox.SuspendLayout();
@@ -93,8 +111,8 @@
 			// ArticleBox
 			// 
 			ArticleBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-			ArticleBox.Controls.Add(SelectPosterButton);
-			ArticleBox.Controls.Add(PictureEditButton);
+			ArticleBox.Controls.Add(groupBox1);
+			ArticleBox.Controls.Add(PosterGroupBox);
 			ArticleBox.Controls.Add(ArticleSource);
 			ArticleBox.Controls.Add(ArticleAuthor);
 			ArticleBox.Controls.Add(TextAlignButton);
@@ -104,29 +122,119 @@
 			ArticleBox.Controls.Add(Article);
 			ArticleBox.Location = new Point(824, 37);
 			ArticleBox.Name = "ArticleBox";
-			ArticleBox.Size = new Size(656, 601);
+			ArticleBox.Size = new Size(656, 627);
 			ArticleBox.TabIndex = 0;
 			ArticleBox.TabStop = false;
 			ArticleBox.Text = "文章预览";
 			// 
-			// SelectPosterButton
+			// groupBox1
 			// 
-			SelectPosterButton.Location = new Point(420, 91);
-			SelectPosterButton.Name = "SelectPosterButton";
-			SelectPosterButton.Size = new Size(230, 35);
-			SelectPosterButton.TabIndex = 7;
-			SelectPosterButton.Text = "内页图片编辑";
-			SelectPosterButton.UseVisualStyleBackColor = true;
-			SelectPosterButton.Click += SelectPosterButton_Click;
+			groupBox1.Controls.Add(ArticlePicturePreview);
+			groupBox1.Controls.Add(NextPicButton);
+			groupBox1.Controls.Add(PrevPicButton);
+			groupBox1.Controls.Add(PictureFileNameLabel);
+			groupBox1.Controls.Add(PictureInsertButton);
+			groupBox1.Controls.Add(PictureEditButton);
+			groupBox1.Font = new Font("微软雅黑 Consolas", 9.267326F, FontStyle.Regular, GraphicsUnit.Point, 134);
+			groupBox1.Location = new Point(277, 80);
+			groupBox1.Name = "groupBox1";
+			groupBox1.Size = new Size(372, 149);
+			groupBox1.TabIndex = 8;
+			groupBox1.TabStop = false;
+			groupBox1.Text = "封面图片预览";
+			// 
+			// ArticlePicturePreview
+			// 
+			ArticlePicturePreview.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			ArticlePicturePreview.Location = new Point(6, 18);
+			ArticlePicturePreview.Name = "ArticlePicturePreview";
+			ArticlePicturePreview.Size = new Size(172, 89);
+			ArticlePicturePreview.SizeMode = PictureBoxSizeMode.Zoom;
+			ArticlePicturePreview.TabIndex = 10;
+			ArticlePicturePreview.TabStop = false;
+			// 
+			// NextPicButton
+			// 
+			NextPicButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			NextPicButton.Location = new Point(278, 83);
+			NextPicButton.Name = "NextPicButton";
+			NextPicButton.Size = new Size(88, 24);
+			NextPicButton.TabIndex = 9;
+			NextPicButton.Text = "下一张";
+			NextPicButton.UseVisualStyleBackColor = true;
+			// 
+			// PrevPicButton
+			// 
+			PrevPicButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			PrevPicButton.Location = new Point(184, 83);
+			PrevPicButton.Name = "PrevPicButton";
+			PrevPicButton.Size = new Size(88, 24);
+			PrevPicButton.TabIndex = 9;
+			PrevPicButton.Text = "上一张";
+			PrevPicButton.UseVisualStyleBackColor = true;
+			// 
+			// PictureFileNameLabel
+			// 
+			PictureFileNameLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			PictureFileNameLabel.AutoSize = true;
+			PictureFileNameLabel.Location = new Point(184, 27);
+			PictureFileNameLabel.Name = "PictureFileNameLabel";
+			PictureFileNameLabel.Size = new Size(50, 17);
+			PictureFileNameLabel.TabIndex = 8;
+			PictureFileNameLabel.Text = "label2";
+			// 
+			// PictureInsertButton
+			// 
+			PictureInsertButton.Location = new Point(184, 113);
+			PictureInsertButton.Name = "PictureInsertButton";
+			PictureInsertButton.Size = new Size(182, 30);
+			PictureInsertButton.TabIndex = 7;
+			PictureInsertButton.Text = "插入本图片（无需换行）";
+			PictureInsertButton.UseVisualStyleBackColor = true;
+			PictureInsertButton.Click += PictureInsertButton_Click;
 			// 
 			// PictureEditButton
 			// 
-			PictureEditButton.Location = new Point(419, 130);
+			PictureEditButton.Location = new Point(6, 113);
 			PictureEditButton.Name = "PictureEditButton";
-			PictureEditButton.Size = new Size(230, 35);
+			PictureEditButton.Size = new Size(172, 30);
 			PictureEditButton.TabIndex = 7;
 			PictureEditButton.Text = "内页图片编辑";
 			PictureEditButton.UseVisualStyleBackColor = true;
+			PictureEditButton.Click += PictureEditButton_Click;
+			// 
+			// PosterGroupBox
+			// 
+			PosterGroupBox.Controls.Add(PosterPictureView);
+			PosterGroupBox.Controls.Add(SelectPosterButton);
+			PosterGroupBox.Font = new Font("微软雅黑 Consolas", 9.267326F, FontStyle.Regular, GraphicsUnit.Point, 134);
+			PosterGroupBox.Location = new Point(6, 80);
+			PosterGroupBox.Name = "PosterGroupBox";
+			PosterGroupBox.Size = new Size(265, 119);
+			PosterGroupBox.TabIndex = 8;
+			PosterGroupBox.TabStop = false;
+			PosterGroupBox.Text = "封面图片预览";
+			// 
+			// PosterPictureView
+			// 
+			PosterPictureView.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			PosterPictureView.Location = new Point(6, 29);
+			PosterPictureView.Name = "PosterPictureView";
+			PosterPictureView.Size = new Size(154, 84);
+			PosterPictureView.TabIndex = 8;
+			PosterPictureView.TabStop = false;
+			// 
+			// SelectPosterButton
+			// 
+			SelectPosterButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			SelectPosterButton.Font = new Font("微软雅黑 Consolas", 9.267326F, FontStyle.Regular, GraphicsUnit.Point, 134);
+			SelectPosterButton.Location = new Point(163, 85);
+			SelectPosterButton.Name = "SelectPosterButton";
+			SelectPosterButton.Size = new Size(96, 28);
+			SelectPosterButton.TabIndex = 7;
+			SelectPosterButton.Text = "封面图片编辑";
+			SelectPosterButton.UseVisualStyleBackColor = true;
+			SelectPosterButton.Click += SelectPosterButton_Click;
 			// 
 			// ArticleSource
 			// 
@@ -155,7 +263,7 @@
 			// TextAlignButton
 			// 
 			TextAlignButton.Font = new Font("微软雅黑 Consolas", 9F, FontStyle.Bold, GraphicsUnit.Point, 134);
-			TextAlignButton.Location = new Point(3, 142);
+			TextAlignButton.Location = new Point(61, 205);
 			TextAlignButton.Name = "TextAlignButton";
 			TextAlignButton.Size = new Size(52, 27);
 			TextAlignButton.TabIndex = 4;
@@ -179,7 +287,7 @@
 			// TextBoldButton
 			// 
 			TextBoldButton.Font = new Font("微软雅黑 Consolas", 9F, FontStyle.Bold, GraphicsUnit.Point, 134);
-			TextBoldButton.Location = new Point(3, 109);
+			TextBoldButton.Location = new Point(5, 205);
 			TextBoldButton.Name = "TextBoldButton";
 			TextBoldButton.Size = new Size(52, 27);
 			TextBoldButton.TabIndex = 2;
@@ -202,11 +310,11 @@
 			// 
 			// Article
 			// 
-			Article.Dock = DockStyle.Bottom;
+			Article.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			Article.EnableAutoDragDrop = true;
-			Article.Location = new Point(3, 171);
+			Article.Location = new Point(3, 236);
 			Article.Name = "Article";
-			Article.Size = new Size(650, 427);
+			Article.Size = new Size(646, 388);
 			Article.TabIndex = 0;
 			Article.Text = "";
 			Article.KeyDown += TextShortcutKey;
@@ -318,7 +426,7 @@
 			CaptureBox.Controls.Add(labeledInput1);
 			CaptureBox.Location = new Point(4, 212);
 			CaptureBox.Name = "CaptureBox";
-			CaptureBox.Size = new Size(813, 211);
+			CaptureBox.Size = new Size(813, 183);
 			CaptureBox.TabIndex = 2;
 			CaptureBox.TabStop = false;
 			CaptureBox.Text = "数据采集";
@@ -367,7 +475,7 @@
 			PageLinkListBox.Location = new Point(8, 61);
 			PageLinkListBox.Name = "PageLinkListBox";
 			PageLinkListBox.ScrollAlwaysVisible = true;
-			PageLinkListBox.Size = new Size(477, 136);
+			PageLinkListBox.Size = new Size(477, 114);
 			PageLinkListBox.TabIndex = 1;
 			PageLinkListBox.SelectedIndexChanged += PageLinkListBox_SelectedIndexChanged;
 			// 
@@ -385,10 +493,11 @@
 			// SystemBox
 			// 
 			SystemBox.Controls.Add(UserSignTextBox);
+			SystemBox.Controls.Add(label2);
 			SystemBox.Controls.Add(PlatformVisibleButton);
-			SystemBox.Location = new Point(565, 429);
+			SystemBox.Location = new Point(565, 401);
 			SystemBox.Name = "SystemBox";
-			SystemBox.Size = new Size(252, 168);
+			SystemBox.Size = new Size(252, 196);
 			SystemBox.TabIndex = 2;
 			SystemBox.TabStop = false;
 			SystemBox.Text = "系统对接";
@@ -400,12 +509,21 @@
 			UserSignTextBox.Location = new Point(3, 26);
 			UserSignTextBox.Multiline = true;
 			UserSignTextBox.Name = "UserSignTextBox";
-			UserSignTextBox.Size = new Size(246, 98);
+			UserSignTextBox.Size = new Size(246, 126);
 			UserSignTextBox.TabIndex = 3;
+			// 
+			// label2
+			// 
+			label2.Location = new Point(20, 51);
+			label2.Name = "label2";
+			label2.Size = new Size(214, 74);
+			label2.TabIndex = 4;
+			label2.Text = "若上传提示失败\r\n请检查本凭据是否有效";
+			label2.TextAlign = ContentAlignment.MiddleCenter;
 			// 
 			// PlatformVisibleButton
 			// 
-			PlatformVisibleButton.Location = new Point(3, 130);
+			PlatformVisibleButton.Location = new Point(3, 158);
 			PlatformVisibleButton.Name = "PlatformVisibleButton";
 			PlatformVisibleButton.Size = new Size(246, 32);
 			PlatformVisibleButton.TabIndex = 2;
@@ -476,9 +594,9 @@
 			// 
 			// UploadButton
 			// 
-			UploadButton.Location = new Point(240, 603);
+			UploadButton.Location = new Point(565, 603);
 			UploadButton.Name = "UploadButton";
-			UploadButton.Size = new Size(577, 35);
+			UploadButton.Size = new Size(253, 67);
 			UploadButton.TabIndex = 4;
 			UploadButton.Text = "上传到系统";
 			UploadButton.UseVisualStyleBackColor = true;
@@ -486,25 +604,36 @@
 			// 
 			// ArticleGeneratorProgressBar
 			// 
-			ArticleGeneratorProgressBar.Location = new Point(6, 138);
+			ArticleGeneratorProgressBar.Location = new Point(8, 101);
 			ArticleGeneratorProgressBar.Name = "ArticleGeneratorProgressBar";
 			ArticleGeneratorProgressBar.Size = new Size(535, 24);
 			ArticleGeneratorProgressBar.TabIndex = 3;
+			ArticleGeneratorProgressBar.Visible = false;
 			// 
 			// PageProcessBox
 			// 
+			PageProcessBox.Controls.Add(ArticleGenerateLog);
 			PageProcessBox.Controls.Add(label1);
 			PageProcessBox.Controls.Add(PageDivClassList);
 			PageProcessBox.Controls.Add(PageLink);
 			PageProcessBox.Controls.Add(PageProcessButton);
 			PageProcessBox.Controls.Add(DetailChecker);
 			PageProcessBox.Controls.Add(ArticleGeneratorProgressBar);
-			PageProcessBox.Location = new Point(4, 429);
+			PageProcessBox.Location = new Point(4, 401);
 			PageProcessBox.Name = "PageProcessBox";
-			PageProcessBox.Size = new Size(555, 168);
+			PageProcessBox.Size = new Size(555, 196);
 			PageProcessBox.TabIndex = 5;
 			PageProcessBox.TabStop = false;
 			PageProcessBox.Text = "链接处理";
+			// 
+			// ArticleGenerateLog
+			// 
+			ArticleGenerateLog.Font = new Font("微软雅黑 Consolas", 9.267326F, FontStyle.Regular, GraphicsUnit.Point, 134);
+			ArticleGenerateLog.FormattingEnabled = true;
+			ArticleGenerateLog.Location = new Point(276, 99);
+			ArticleGenerateLog.Name = "ArticleGenerateLog";
+			ArticleGenerateLog.Size = new Size(264, 89);
+			ArticleGenerateLog.TabIndex = 8;
 			// 
 			// label1
 			// 
@@ -539,7 +668,7 @@
 			// 
 			// PageProcessButton
 			// 
-			PageProcessButton.Location = new Point(406, 73);
+			PageProcessButton.Location = new Point(406, 64);
 			PageProcessButton.Name = "PageProcessButton";
 			PageProcessButton.Size = new Size(135, 31);
 			PageProcessButton.TabIndex = 5;
@@ -550,7 +679,7 @@
 			// DetailChecker
 			// 
 			DetailChecker.AutoSize = true;
-			DetailChecker.Location = new Point(277, 76);
+			DetailChecker.Location = new Point(277, 67);
 			DetailChecker.Name = "DetailChecker";
 			DetailChecker.Size = new Size(131, 26);
 			DetailChecker.TabIndex = 4;
@@ -561,7 +690,7 @@
 			// 
 			ArticleClearButton.Location = new Point(4, 603);
 			ArticleClearButton.Name = "ArticleClearButton";
-			ArticleClearButton.Size = new Size(230, 35);
+			ArticleClearButton.Size = new Size(185, 35);
 			ArticleClearButton.TabIndex = 4;
 			ArticleClearButton.Text = "清除编辑器";
 			ArticleClearButton.UseVisualStyleBackColor = true;
@@ -576,12 +705,53 @@
 			LinkReloadChecker.Text = "切换至列表下一条目";
 			LinkReloadChecker.UseVisualStyleBackColor = true;
 			// 
+			// PictureList
+			// 
+			PictureList.ColorDepth = ColorDepth.Depth32Bit;
+			PictureList.ImageSize = new Size(16, 16);
+			PictureList.TransparentColor = Color.Transparent;
+			// 
+			// ArticleUploadNow
+			// 
+			ArticleUploadNow.AutoSize = true;
+			ArticleUploadNow.Location = new Point(495, 607);
+			ArticleUploadNow.Name = "ArticleUploadNow";
+			ArticleUploadNow.Size = new Size(62, 26);
+			ArticleUploadNow.TabIndex = 6;
+			ArticleUploadNow.TabStop = true;
+			ArticleUploadNow.Text = "即时";
+			ArticleUploadNow.UseVisualStyleBackColor = true;
+			// 
+			// ArticleUploadLater
+			// 
+			ArticleUploadLater.AutoSize = true;
+			ArticleUploadLater.Location = new Point(495, 638);
+			ArticleUploadLater.Name = "ArticleUploadLater";
+			ArticleUploadLater.Size = new Size(62, 26);
+			ArticleUploadLater.TabIndex = 6;
+			ArticleUploadLater.TabStop = true;
+			ArticleUploadLater.Text = "定时";
+			ArticleUploadLater.UseVisualStyleBackColor = true;
+			// 
+			// ArticleAsDraft
+			// 
+			ArticleAsDraft.AutoSize = true;
+			ArticleAsDraft.Location = new Point(426, 624);
+			ArticleAsDraft.Name = "ArticleAsDraft";
+			ArticleAsDraft.Size = new Size(63, 26);
+			ArticleAsDraft.TabIndex = 7;
+			ArticleAsDraft.Text = "草稿";
+			ArticleAsDraft.UseVisualStyleBackColor = true;
+			// 
 			// Form1
 			// 
 			AutoScaleDimensions = new SizeF(9F, 22F);
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = Color.Linen;
-			ClientSize = new Size(1493, 773);
+			ClientSize = new Size(1493, 676);
+			Controls.Add(ArticleAsDraft);
+			Controls.Add(ArticleUploadLater);
+			Controls.Add(ArticleUploadNow);
 			Controls.Add(PageProcessBox);
 			Controls.Add(ArticleClearButton);
 			Controls.Add(LinkReloadChecker);
@@ -596,6 +766,11 @@
 			Name = "Form1";
 			Text = "Laoliu666_Qieyou文章快速填充工具";
 			ArticleBox.ResumeLayout(false);
+			groupBox1.ResumeLayout(false);
+			groupBox1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)ArticlePicturePreview).EndInit();
+			PosterGroupBox.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)PosterPictureView).EndInit();
 			AIBox.ResumeLayout(false);
 			PromptListMenu.ResumeLayout(false);
 			CaptureBox.ResumeLayout(false);
@@ -663,5 +838,19 @@
 		private System.ComponentModel.BackgroundWorker ProgressBarBackground;
 		private Button PictureEditButton;
 		private Button SelectPosterButton;
+		private GroupBox PosterGroupBox;
+		private PictureBox PosterPictureView;
+		private GroupBox groupBox1;
+		private ImageList PictureList;
+		private PictureBox ArticlePicturePreview;
+		private Button NextPicButton;
+		private Button PrevPicButton;
+		private Label PictureFileNameLabel;
+		private Label label2;
+		private RadioButton ArticleUploadNow;
+		private RadioButton ArticleUploadLater;
+		private CheckBox ArticleAsDraft;
+		private Button PictureInsertButton;
+		private ListBox ArticleGenerateLog;
 	}
 }

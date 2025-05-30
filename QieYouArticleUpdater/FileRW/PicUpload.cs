@@ -60,5 +60,50 @@ namespace QieYouArticleUpdater.FileRW
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
         }
+        public async Task<string> PictureUpload(Image image)
+        {
+			using (Bitmap bitmap = new Bitmap(image)) // 这里假设你有一个 example.png 文件
+			{
+				byte[] imageBytes = ImageToByteArray(bitmap);
+
+				using (var client = new HttpClient())
+				{
+					using (var content = new MultipartFormDataContent())
+					{
+						var byteArrayContent = new ByteArrayContent(imageBytes);
+						byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
+						content.Add(byteArrayContent, "file", "uploaded_image.jpeg");
+
+						try
+						{
+							HttpResponseMessage response = await client.PostAsync("https://api.qieyou.com/admin/Game/getUploads", content);
+
+							if (response.IsSuccessStatusCode)
+							{
+								string responseBody = await response.Content.ReadAsStringAsync();
+								return responseBody;
+							}
+							else
+							{
+								return response.StatusCode.ToString();
+							}
+						}
+						catch (Exception ex)
+						{
+							return ex.Message;
+						}
+					}
+				}
+			}
+		}
+
+		static byte[] ImageToByteArray(Bitmap image)
+		{
+			using (MemoryStream ms = new MemoryStream())
+			{
+				image.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg); // 根据需要选择合适的格式
+				return ms.ToArray();
+			}
+		}
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace pictureIO
+﻿namespace QieYouArticleUpdater
 {
 	partial class PictureIO
 	{
@@ -67,18 +67,13 @@
 			groupBox4 = new GroupBox();
 			ImageSherpen = new Button();
 			tabPage2 = new TabPage();
-			groupBox2 = new GroupBox();
-			resolutionX2 = new TextBox();
-			Generator2 = new Button();
-			resolutionY2 = new TextBox();
-			Suffix2 = new TextBox();
-			outputpath2 = new TextBox();
 			copycomplete = new Label();
 			convertIframeButton = new Button();
 			inputiframetext = new Label();
 			outputsharediframebox = new TextBox();
 			inputsharediframebox = new TextBox();
 			PicList = new ImageList(components);
+			PictureUploader = new Button();
 			((System.ComponentModel.ISupportInitialize)PictureInput).BeginInit();
 			groupBox1.SuspendLayout();
 			panel1.SuspendLayout();
@@ -89,7 +84,6 @@
 			tabPage1.SuspendLayout();
 			groupBox4.SuspendLayout();
 			tabPage2.SuspendLayout();
-			groupBox2.SuspendLayout();
 			SuspendLayout();
 			// 
 			// PictureInput
@@ -143,9 +137,9 @@
 			// 
 			// Generator
 			// 
-			Generator.Location = new Point(6, 116);
+			Generator.Location = new Point(557, 496);
 			Generator.Name = "Generator";
-			Generator.Size = new Size(100, 50);
+			Generator.Size = new Size(100, 27);
 			Generator.TabIndex = 2;
 			Generator.Text = "保存图像";
 			Generator.UseVisualStyleBackColor = true;
@@ -157,22 +151,21 @@
 			groupBox1.Controls.Add(PicFileSize);
 			groupBox1.Controls.Add(label1);
 			groupBox1.Controls.Add(QualitySelector);
-			groupBox1.Controls.Add(CopyGenerator);
 			groupBox1.Controls.Add(resolutionX);
-			groupBox1.Controls.Add(Generator);
 			groupBox1.Controls.Add(resolutionY);
+			groupBox1.Controls.Add(PictureUploader);
 			groupBox1.Controls.Add(Suffix1);
 			groupBox1.Controls.Add(OutputPath);
 			groupBox1.Location = new Point(551, 6);
 			groupBox1.Name = "groupBox1";
-			groupBox1.Size = new Size(220, 204);
+			groupBox1.Size = new Size(220, 248);
 			groupBox1.TabIndex = 3;
 			groupBox1.TabStop = false;
 			groupBox1.Text = "按比例缩放图像";
 			// 
 			// PicFileSize
 			// 
-			PicFileSize.Location = new Point(128, 174);
+			PicFileSize.Location = new Point(128, 118);
 			PicFileSize.Name = "PicFileSize";
 			PicFileSize.Size = new Size(83, 20);
 			PicFileSize.TabIndex = 6;
@@ -182,7 +175,7 @@
 			// label1
 			// 
 			label1.AutoSize = true;
-			label1.Location = new Point(6, 174);
+			label1.Location = new Point(6, 118);
 			label1.Name = "label1";
 			label1.Size = new Size(126, 19);
 			label1.TabIndex = 5;
@@ -203,9 +196,9 @@
 			// 
 			// CopyGenerator
 			// 
-			CopyGenerator.Location = new Point(112, 116);
+			CopyGenerator.Location = new Point(663, 496);
 			CopyGenerator.Name = "CopyGenerator";
-			CopyGenerator.Size = new Size(100, 50);
+			CopyGenerator.Size = new Size(100, 27);
 			CopyGenerator.TabIndex = 3;
 			CopyGenerator.Text = "复制图像";
 			CopyGenerator.UseVisualStyleBackColor = true;
@@ -230,7 +223,7 @@
 			groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			groupBox3.Controls.Add(tableLayoutPanel1);
 			groupBox3.Controls.Add(ClickedPoint);
-			groupBox3.Location = new Point(550, 216);
+			groupBox3.Location = new Point(551, 260);
 			groupBox3.Name = "groupBox3";
 			groupBox3.Size = new Size(221, 163);
 			groupBox3.TabIndex = 5;
@@ -465,7 +458,9 @@
 			tabPage1.Controls.Add(groupBox4);
 			tabPage1.Controls.Add(panel1);
 			tabPage1.Controls.Add(groupBox1);
+			tabPage1.Controls.Add(CopyGenerator);
 			tabPage1.Controls.Add(groupBox3);
+			tabPage1.Controls.Add(Generator);
 			tabPage1.Location = new Point(4, 4);
 			tabPage1.Name = "tabPage1";
 			tabPage1.Padding = new Padding(3);
@@ -477,7 +472,7 @@
 			// groupBox4
 			// 
 			groupBox4.Controls.Add(ImageSherpen);
-			groupBox4.Location = new Point(550, 385);
+			groupBox4.Location = new Point(551, 429);
 			groupBox4.Name = "groupBox4";
 			groupBox4.Size = new Size(221, 61);
 			groupBox4.TabIndex = 6;
@@ -496,7 +491,6 @@
 			// 
 			// tabPage2
 			// 
-			tabPage2.Controls.Add(groupBox2);
 			tabPage2.Controls.Add(copycomplete);
 			tabPage2.Controls.Add(convertIframeButton);
 			tabPage2.Controls.Add(inputiframetext);
@@ -509,63 +503,6 @@
 			tabPage2.TabIndex = 1;
 			tabPage2.Text = "文字链接处理";
 			tabPage2.UseVisualStyleBackColor = true;
-			// 
-			// groupBox2
-			// 
-			groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			groupBox2.Controls.Add(resolutionX2);
-			groupBox2.Controls.Add(Generator2);
-			groupBox2.Controls.Add(resolutionY2);
-			groupBox2.Controls.Add(Suffix2);
-			groupBox2.Controls.Add(outputpath2);
-			groupBox2.Enabled = false;
-			groupBox2.Location = new Point(550, 8);
-			groupBox2.Name = "groupBox2";
-			groupBox2.Size = new Size(221, 173);
-			groupBox2.TabIndex = 5;
-			groupBox2.TabStop = false;
-			groupBox2.Text = "裁切图像到对应尺寸";
-			groupBox2.Visible = false;
-			// 
-			// resolutionX2
-			// 
-			resolutionX2.Location = new Point(6, 23);
-			resolutionX2.Name = "resolutionX2";
-			resolutionX2.Size = new Size(84, 24);
-			resolutionX2.TabIndex = 1;
-			resolutionX2.Text = "220";
-			// 
-			// Generator2
-			// 
-			Generator2.Location = new Point(6, 113);
-			Generator2.Name = "Generator2";
-			Generator2.Size = new Size(174, 50);
-			Generator2.TabIndex = 2;
-			Generator2.Text = "生成图像";
-			Generator2.UseVisualStyleBackColor = true;
-			// 
-			// resolutionY2
-			// 
-			resolutionY2.Location = new Point(96, 23);
-			resolutionY2.Name = "resolutionY2";
-			resolutionY2.Size = new Size(84, 24);
-			resolutionY2.TabIndex = 1;
-			resolutionY2.Text = "140";
-			// 
-			// Suffix2
-			// 
-			Suffix2.Location = new Point(6, 83);
-			Suffix2.Name = "Suffix2";
-			Suffix2.Size = new Size(84, 24);
-			Suffix2.TabIndex = 1;
-			Suffix2.Text = "封面缩略图";
-			// 
-			// outputpath2
-			// 
-			outputpath2.Location = new Point(6, 53);
-			outputpath2.Name = "outputpath2";
-			outputpath2.Size = new Size(174, 24);
-			outputpath2.TabIndex = 1;
 			// 
 			// copycomplete
 			// 
@@ -621,6 +558,16 @@
 			PicList.ImageSize = new Size(16, 16);
 			PicList.TransparentColor = Color.Transparent;
 			// 
+			// PictureUploader
+			// 
+			PictureUploader.Location = new Point(7, 141);
+			PictureUploader.Name = "PictureUploader";
+			PictureUploader.Size = new Size(205, 37);
+			PictureUploader.TabIndex = 2;
+			PictureUploader.Text = "上传图像";
+			PictureUploader.UseVisualStyleBackColor = true;
+			PictureUploader.Click += Generator_Click;
+			// 
 			// PictureIO
 			// 
 			AutoScaleDimensions = new SizeF(8F, 19F);
@@ -645,8 +592,6 @@
 			groupBox4.ResumeLayout(false);
 			tabPage2.ResumeLayout(false);
 			tabPage2.PerformLayout();
-			groupBox2.ResumeLayout(false);
-			groupBox2.PerformLayout();
 			ResumeLayout(false);
 		}
 
@@ -692,15 +637,10 @@
 		private Button CopyGenerator;
 		private Label label1;
 		private ComboBox QualitySelector;
-		private GroupBox groupBox2;
-		private TextBox resolutionX2;
-		private Button Generator2;
-		private TextBox resolutionY2;
-		private TextBox Suffix2;
-		private TextBox outputpath2;
 		private Label PicFileSize;
 		private GroupBox groupBox4;
 		private Button ImageSherpen;
 		private ImageList PicList;
+		private Button PictureUploader;
 	}
 }

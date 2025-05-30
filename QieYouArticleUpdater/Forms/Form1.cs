@@ -1,4 +1,5 @@
-﻿using QieYouArticleUpdater.Main;
+﻿using QieYouArticleUpdater.FileRW;
+using QieYouArticleUpdater.Main;
 
 namespace QieYouArticleUpdater
 {
@@ -80,32 +81,65 @@ namespace QieYouArticleUpdater
 
 		private async void PageProcessButton_Click(object sender, EventArgs e)
 		{
+			/* log的调用方法：ArticleGenerateLog.Items.Add(string);
+			 * log包含下面几种，每种都要有【OK】【ERROR】两种预案：
+			 * 1.获取文章链接
+			 * 2.获取页面内容
+			 * 3.获取指定的content并转化为纯文字
+			 * 4.连接AI API
+			 * 5.上传内容
+			 * 6.获得改写后内容
+			 * 7.上传文章
+			 * 8.文章上传完成
+			 */
+			WebpageAccess webpage = new WebpageAccess();
+			WebCommunication communication = new WebCommunication();
 			if (PageLink.InputText.Length < 5)
 			{
 				MessageBox.Show("尚未检测到有效的链接！", "无指定链接", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
 			}
-
-			WebpageAccess webpage = new WebpageAccess();
-			WebCommunication communication = new WebCommunication();
+			string WebContent = string.Empty;
+			string OriginalArticle = string.Empty;
+			Image[] ArticleImages;
+			// 获取页面内容
+			try
+			{
+				WebContent = webpage.GetWebpageContent(PageLink.InputText);
+			}
+			catch (Exception)
+			{
+				ArticleGenerateLog.Items.Add("[ERROR] 无法获取页面内容");
+				return;
+			}
+			// 获取指定div
+			try
+			{
+				OriginalArticle = webpage.ExtractTextByClass(WebContent, PageDivClassList.SelectedItem.ToString());
+				//ArticleImages = webpage.GetImages(WebContent, PageDivClassList.SelectedItem.ToString());
+				ArticleImages = webpage.GetImages(WebContent, "article");
+			}
+			catch (Exception)
+			{
+				ArticleGenerateLog.Items.Add("[ERROR] 页面指定部分的div未找到");
+				return;
+			}
+			if (ArticleImages.Length > 0) ArticlePicturePreview.Image = ArticleImages[0];
 			//测试用
 			//Article.Text = webpage.GetWebpageContent(PageLink.InputText);
 
 			//Article.Text = webpage.ExtractTextByClass(webpage.GetWebpageContent(PageLink.InputText), PageDivClassList.SelectedItem.ToString());
 			//Thread ProgressBarRefresh = new Thread(new ThreadStart(ProgressBarRefreshTask));
 
-			//ProgressBarRefresh.Start();
-			Article.Text = await communication.DS_Message(webpage.ExtractTextByClass(webpage.GetWebpageContent(PageLink.InputText), PageDivClassList.SelectedItem.ToString()));
-			//ProgressBarRefresh.Abort();
-			ArticleGeneratorProgressBar.Value = 100;
-		}
-		private void ProgressBarRefreshTask()
-		{
-			/*while (ArticleGeneratorProgressBar.Value < 100)
+			try
 			{
-				System.Threading.Thread.Sleep(20);
-				ArticleGeneratorProgressBar.Value += 1;
-			}*/
+				Article.Text = await communication.DS_Message(OriginalArticle);
+			}
+			catch (Exception exp)
+			{
+				ArticleGenerateLog.Items.Add(string.Format($"[ERROR] 与AI API通信出现错误:{0}", exp));
+			}
+
 		}
 		private void PlatformVisibleButton_Click(object sender, EventArgs e)
 		{
@@ -142,6 +176,7 @@ namespace QieYouArticleUpdater
 
 		private void PageLinkListBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			ArticleGenerateLog.Items.Clear();
 			if (PageLinkListBox.SelectedItem != null)
 			{
 				PageLink.InputText = PageLinkListBox.SelectedItem.ToString();
@@ -196,6 +231,26 @@ namespace QieYouArticleUpdater
 					posterFilePath = openFileDialog.FileName;
 					//lblSelectedFile.Text = $"Selected File: {Path.GetFileName(posterFilePath)}";
 				}
+			}
+		}
+
+		private void PictureEditButton_Click(object sender, EventArgs e)
+		{
+			PictureIO picedit = new PictureIO();
+			picedit.PicTransmission(PictureList);
+			picedit.ShowDialog();
+		}
+
+		private void PictureInsertButton_Click(object sender, EventArgs e)
+		{
+			//插图
+			//<p style="text-align: center;"><img src="https://img.qieyou.com/editor/6835125b76104.jpg" alt="" data-href="" style=""></p>
+			PicUpload uploader = new PicUpload();
+			if(ArticlePicturePreview.Image==null)return;
+			var PictureURL = uploader.PictureUpload(ArticlePicturePreview.Image);
+			if (PictureURL != null)
+			{
+				Article.SelectedText.Insert(0, String.Format($"<p style=\"text-align: center;\"><img src=\"{PictureURL}\" alt=\"\" data-href=\"\" style=\"\"></p>"));
 			}
 		}
 	}

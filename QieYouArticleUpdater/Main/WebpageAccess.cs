@@ -40,5 +40,61 @@ namespace QieYouArticleUpdater.Main
 			string textContent = string.Join(" ", nodes.Select(node => node.InnerText.Trim()));
 			return textContent;
 		}
+		public Image[] GetImages(string html, string className) 
+		{
+			HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
+			document.LoadHtml(html);
+
+			var nodes = document.DocumentNode.SelectNodes($"//div[@class='{className}']");
+			if (nodes == null)
+			{
+				return Array.Empty<Image>();
+			}
+
+			List<Image> images = new List<Image>();
+
+			foreach (var node in nodes)
+			{
+				var imgNodes = node.SelectNodes(".//img");
+				if (imgNodes != null)
+				{
+					foreach (var imgNode in imgNodes)
+					{
+						var srcAttr = imgNode.Attributes["src"];
+						if (srcAttr != null && !string.IsNullOrEmpty(srcAttr.Value))
+						{
+							string cleanUrl = CleanImageUrl(srcAttr.Value);
+							try
+							{
+								using (WebClient client = new WebClient())
+								{
+									byte[] imageData = client.DownloadData(cleanUrl);
+									using (MemoryStream ms = new MemoryStream(imageData))
+									{
+										images.Add(Image.FromStream(ms));
+									}
+								}
+							}
+							catch (Exception ex)
+							{
+								// Handle exceptions (e.g., invalid URLs, network issues)
+								Console.WriteLine($"Error loading image from {cleanUrl}: {ex.Message}");
+							}
+						}
+					}
+				}
+			}
+
+			return images.ToArray();
+		}
+		private string CleanImageUrl(string url)
+		{
+			Uri uri = new Uri(url);
+			UriBuilder uriBuilder = new UriBuilder(uri)
+			{
+				Query = string.Empty // Remove query parameters
+			};
+			return uriBuilder.ToString();
+		}
 	}
 }

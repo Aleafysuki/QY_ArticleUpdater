@@ -5,7 +5,7 @@ using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Collections.Specialized;
 using QieYouArticleUpdater.Main;
-namespace pictureIO
+namespace QieYouArticleUpdater
 {
 	public partial class PictureIO : Form
 	{
@@ -28,21 +28,22 @@ namespace pictureIO
 					if (file.StartsWith("OutputPath1="))
 					{ OutputPath.Text = file.Split('=')[1]; }
 					else if (file.StartsWith("OutputPath2="))
-					{ outputpath2.Text = file.Split('=')[1]; }
-					if (file.StartsWith("resolution1="))
-					{
-						resolutionX.Text = file.Split('=')[1].Split(',')[0];
-						resolutionY.Text = file.Split('=')[1].Split(',')[1];
-					}
-					if (file.StartsWith("resolution2="))
-					{
-						resolutionX2.Text = file.Split('=')[1].Split(',')[0];
-						resolutionY2.Text = file.Split('=')[1].Split(',')[1];
+					{ //outputpath2.Text = file.Split('=')[1]; }
+						if (file.StartsWith("resolution1="))
+						{
+							resolutionX.Text = file.Split('=')[1].Split(',')[0];
+							resolutionY.Text = file.Split('=')[1].Split(',')[1];
+						}
+						if (file.StartsWith("resolution2="))
+						{
+							//resolutionX2.Text = file.Split('=')[1].Split(',')[0];
+							//resolutionY2.Text = file.Split('=')[1].Split(',')[1];
+						}
 					}
 				}
+				groupBox3.Enabled = false;
+				QualitySelector.SelectedIndex = 0;
 			}
-			groupBox3.Enabled = false;
-			QualitySelector.SelectedIndex = 0;
 		}
 		#region pictures
 		private void PictureInput_DragDrop(object sender, DragEventArgs e)
@@ -200,11 +201,6 @@ namespace pictureIO
 			//Clipboard.SetImage(img);
 		}
 
-		private void Generator2_Click(object sender, EventArgs e)
-		{
-			img = ResizeImage(img, new Size(Convert.ToInt32(resolutionX2.Text), Convert.ToInt32(resolutionY2.Text)));
-			img.Save(OutputPath.Text + "\\" + Suffix2.Text + "-" + DateTime.Now.ToString("MM-dd-hh-mm-ss") + ".jpg", ImageFormat.Jpeg);
-		}
 		public Image ResizeImage(Image imgToResize, Size size)
 		{
 			var ratioX = (double)size.Width / imgToResize.Width;
@@ -500,6 +496,10 @@ namespace pictureIO
 			PictureInput_BackgroundImageChanged();
 		}
 		#endregion
+		public void PicTransmission(ImageList list)
+		{
+			PicList = list;
+		}
 		#region iFrames
 		/// <summary>
 		/// ×ª»»iframe
