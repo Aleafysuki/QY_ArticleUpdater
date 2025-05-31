@@ -5,8 +5,9 @@ using System.Net.Http.Headers;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
+using static QYArticleUpdater.Main.Caesar;
 
-namespace QieYouArticleUpdater.Main
+namespace QYArticleUpdater.Main
 {
 	internal class ArticleRewrite
 	{
@@ -21,7 +22,7 @@ namespace QieYouArticleUpdater.Main
 					content.Add(new StringContent(item.Value), item.Key);
 				}
 
-				HttpResponseMessage response = await client.PostAsync("http://api.qieyou.com/admin/Article/articleEdit", content);
+				HttpResponseMessage response = await client.PostAsync(CaesarDecode(14, @"Zffb,!!Sb[ c[Wkag Ua_!SV_[`!3df[U^W!Sdf[U^W7V[f"), content);
 				response.EnsureSuccessStatusCode();
 				return await response.Content.ReadAsStringAsync();
 			}
@@ -48,7 +49,7 @@ namespace QieYouArticleUpdater.Main
 					content.Add(streamContent, "zh_poster", Path.GetFileName(posterFilePath));
 				}
 
-				HttpResponseMessage response = await client.PostAsync("http://api.qieyou.com/admin/Article/articleEdit", content);
+				HttpResponseMessage response = await client.PostAsync(CaesarDecode(14, @"Zffb,!!Sb[ c[Wkag Ua_!SV_[`!3df[U^W!Sdf[U^W7V[f"), content);
 				response.EnsureSuccessStatusCode();
 				return await response.Content.ReadAsStringAsync();
 			}

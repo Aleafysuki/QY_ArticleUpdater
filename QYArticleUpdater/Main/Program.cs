@@ -1,4 +1,4 @@
-namespace QieYouArticleUpdater.Main
+namespace QYArticleUpdater.Main
 {
     internal static class Program
     {

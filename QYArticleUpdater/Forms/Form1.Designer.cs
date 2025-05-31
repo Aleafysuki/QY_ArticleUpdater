@@ -1,4 +1,4 @@
-﻿namespace QieYouArticleUpdater
+﻿namespace QYArticleUpdater
 {
 	partial class Form1
 	{
@@ -31,6 +31,7 @@
 			components = new System.ComponentModel.Container();
 			ArticleBox = new GroupBox();
 			groupBox1 = new GroupBox();
+			PictureQuickSizeButton = new Button();
 			ArticlePicturePreview = new PictureBox();
 			NextPicButton = new Button();
 			PrevPicButton = new Button();
@@ -79,8 +80,8 @@
 			toolStripSeparator2 = new ToolStripSeparator();
 			toolStripMenuItem3 = new ToolStripMenuItem();
 			UploadButton = new Button();
-			ArticleGeneratorProgressBar = new ProgressBar();
 			PageProcessBox = new GroupBox();
+			SkipAI = new CheckBox();
 			ArticleGenerateLog = new ListBox();
 			label1 = new Label();
 			PageDivClassList = new ListBox();
@@ -90,7 +91,6 @@
 			ArticleClearButton = new Button();
 			LinkReloadChecker = new CheckBox();
 			ProgressBarBackground = new System.ComponentModel.BackgroundWorker();
-			PictureList = new ImageList(components);
 			ArticleUploadNow = new RadioButton();
 			ArticleUploadLater = new RadioButton();
 			ArticleAsDraft = new CheckBox();
@@ -120,15 +120,16 @@
 			ArticleBox.Controls.Add(TextBoldButton);
 			ArticleBox.Controls.Add(ArticleTitle);
 			ArticleBox.Controls.Add(Article);
-			ArticleBox.Location = new Point(824, 37);
+			ArticleBox.Location = new Point(914, 37);
 			ArticleBox.Name = "ArticleBox";
-			ArticleBox.Size = new Size(656, 627);
+			ArticleBox.Size = new Size(657, 711);
 			ArticleBox.TabIndex = 0;
 			ArticleBox.TabStop = false;
 			ArticleBox.Text = "文章预览";
 			// 
 			// groupBox1
 			// 
+			groupBox1.Controls.Add(PictureQuickSizeButton);
 			groupBox1.Controls.Add(ArticlePicturePreview);
 			groupBox1.Controls.Add(NextPicButton);
 			groupBox1.Controls.Add(PrevPicButton);
@@ -141,43 +142,56 @@
 			groupBox1.Size = new Size(372, 149);
 			groupBox1.TabIndex = 8;
 			groupBox1.TabStop = false;
-			groupBox1.Text = "封面图片预览";
+			groupBox1.Text = "正文图片预览";
+			// 
+			// PictureQuickSizeButton
+			// 
+			PictureQuickSizeButton.Location = new Point(103, 113);
+			PictureQuickSizeButton.Name = "PictureQuickSizeButton";
+			PictureQuickSizeButton.Size = new Size(94, 30);
+			PictureQuickSizeButton.TabIndex = 11;
+			PictureQuickSizeButton.Text = "一键批量处理";
+			PictureQuickSizeButton.UseVisualStyleBackColor = true;
+			PictureQuickSizeButton.Click += PictureQuickSizeButton_Click;
 			// 
 			// ArticlePicturePreview
 			// 
 			ArticlePicturePreview.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			ArticlePicturePreview.Location = new Point(6, 18);
 			ArticlePicturePreview.Name = "ArticlePicturePreview";
-			ArticlePicturePreview.Size = new Size(172, 89);
+			ArticlePicturePreview.Size = new Size(191, 89);
 			ArticlePicturePreview.SizeMode = PictureBoxSizeMode.Zoom;
 			ArticlePicturePreview.TabIndex = 10;
 			ArticlePicturePreview.TabStop = false;
+			ArticlePicturePreview.Paint += ArticlePicturePreview_Paint;
 			// 
 			// NextPicButton
 			// 
 			NextPicButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			NextPicButton.Location = new Point(278, 83);
+			NextPicButton.Location = new Point(288, 83);
 			NextPicButton.Name = "NextPicButton";
-			NextPicButton.Size = new Size(88, 24);
+			NextPicButton.Size = new Size(78, 24);
 			NextPicButton.TabIndex = 9;
 			NextPicButton.Text = "下一张";
 			NextPicButton.UseVisualStyleBackColor = true;
+			NextPicButton.Click += NextPicButton_Click;
 			// 
 			// PrevPicButton
 			// 
 			PrevPicButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			PrevPicButton.Location = new Point(184, 83);
+			PrevPicButton.Location = new Point(203, 83);
 			PrevPicButton.Name = "PrevPicButton";
-			PrevPicButton.Size = new Size(88, 24);
+			PrevPicButton.Size = new Size(78, 24);
 			PrevPicButton.TabIndex = 9;
 			PrevPicButton.Text = "上一张";
 			PrevPicButton.UseVisualStyleBackColor = true;
+			PrevPicButton.Click += PrevPicButton_Click;
 			// 
 			// PictureFileNameLabel
 			// 
 			PictureFileNameLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			PictureFileNameLabel.AutoSize = true;
-			PictureFileNameLabel.Location = new Point(184, 27);
+			PictureFileNameLabel.Location = new Point(203, 29);
 			PictureFileNameLabel.Name = "PictureFileNameLabel";
 			PictureFileNameLabel.Size = new Size(50, 17);
 			PictureFileNameLabel.TabIndex = 8;
@@ -185,9 +199,9 @@
 			// 
 			// PictureInsertButton
 			// 
-			PictureInsertButton.Location = new Point(184, 113);
+			PictureInsertButton.Location = new Point(203, 113);
 			PictureInsertButton.Name = "PictureInsertButton";
-			PictureInsertButton.Size = new Size(182, 30);
+			PictureInsertButton.Size = new Size(163, 30);
 			PictureInsertButton.TabIndex = 7;
 			PictureInsertButton.Text = "插入本图片（无需换行）";
 			PictureInsertButton.UseVisualStyleBackColor = true;
@@ -197,7 +211,7 @@
 			// 
 			PictureEditButton.Location = new Point(6, 113);
 			PictureEditButton.Name = "PictureEditButton";
-			PictureEditButton.Size = new Size(172, 30);
+			PictureEditButton.Size = new Size(94, 30);
 			PictureEditButton.TabIndex = 7;
 			PictureEditButton.Text = "内页图片编辑";
 			PictureEditButton.UseVisualStyleBackColor = true;
@@ -218,9 +232,9 @@
 			// PosterPictureView
 			// 
 			PosterPictureView.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			PosterPictureView.Location = new Point(6, 29);
+			PosterPictureView.Location = new Point(6, 24);
 			PosterPictureView.Name = "PosterPictureView";
-			PosterPictureView.Size = new Size(154, 84);
+			PosterPictureView.Size = new Size(154, 89);
 			PosterPictureView.TabIndex = 8;
 			PosterPictureView.TabStop = false;
 			// 
@@ -280,8 +294,8 @@
 			ArticleTags.LabelText = "标签Tag";
 			ArticleTags.Location = new Point(5, 53);
 			ArticleTags.Name = "ArticleTags";
-			ArticleTags.Size = new Size(350, 21);
-			ArticleTags.SplitVal = 98;
+			ArticleTags.Size = new Size(345, 21);
+			ArticleTags.SplitVal = 96;
 			ArticleTags.TabIndex = 3;
 			// 
 			// TextBoldButton
@@ -314,7 +328,7 @@
 			Article.EnableAutoDragDrop = true;
 			Article.Location = new Point(3, 236);
 			Article.Name = "Article";
-			Article.Size = new Size(646, 388);
+			Article.Size = new Size(647, 472);
 			Article.TabIndex = 0;
 			Article.Text = "";
 			Article.KeyDown += TextShortcutKey;
@@ -328,7 +342,7 @@
 			AIBox.Controls.Add(AIAPIArea);
 			AIBox.Location = new Point(4, 37);
 			AIBox.Name = "AIBox";
-			AIBox.Size = new Size(813, 169);
+			AIBox.Size = new Size(904, 169);
 			AIBox.TabIndex = 1;
 			AIBox.TabStop = false;
 			AIBox.Text = "AI工具使用";
@@ -338,10 +352,10 @@
 			PromptPreviewList.ContextMenuStrip = PromptListMenu;
 			PromptPreviewList.FormattingEnabled = true;
 			PromptPreviewList.ItemHeight = 22;
-			PromptPreviewList.Location = new Point(464, 29);
+			PromptPreviewList.Location = new Point(464, 24);
 			PromptPreviewList.Name = "PromptPreviewList";
 			PromptPreviewList.ScrollAlwaysVisible = true;
-			PromptPreviewList.Size = new Size(343, 136);
+			PromptPreviewList.Size = new Size(434, 136);
 			PromptPreviewList.TabIndex = 4;
 			// 
 			// PromptListMenu
@@ -424,16 +438,16 @@
 			CaptureBox.Controls.Add(FileImportButton);
 			CaptureBox.Controls.Add(PageLinkListBox);
 			CaptureBox.Controls.Add(labeledInput1);
-			CaptureBox.Location = new Point(4, 212);
+			CaptureBox.Location = new Point(4, 411);
 			CaptureBox.Name = "CaptureBox";
-			CaptureBox.Size = new Size(813, 183);
+			CaptureBox.Size = new Size(630, 183);
 			CaptureBox.TabIndex = 2;
 			CaptureBox.TabStop = false;
 			CaptureBox.Text = "数据采集";
 			// 
 			// PageLinkListBoxManageButton
 			// 
-			PageLinkListBoxManageButton.Location = new Point(491, 135);
+			PageLinkListBoxManageButton.Location = new Point(462, 140);
 			PageLinkListBoxManageButton.Name = "PageLinkListBoxManageButton";
 			PageLinkListBoxManageButton.Size = new Size(165, 31);
 			PageLinkListBoxManageButton.TabIndex = 4;
@@ -443,7 +457,7 @@
 			// 
 			// LinkDeleteButton
 			// 
-			LinkDeleteButton.Location = new Point(491, 98);
+			LinkDeleteButton.Location = new Point(462, 102);
 			LinkDeleteButton.Name = "LinkDeleteButton";
 			LinkDeleteButton.Size = new Size(165, 31);
 			LinkDeleteButton.TabIndex = 4;
@@ -452,7 +466,7 @@
 			// 
 			// button1
 			// 
-			button1.Location = new Point(491, 26);
+			button1.Location = new Point(462, 28);
 			button1.Name = "button1";
 			button1.Size = new Size(165, 31);
 			button1.TabIndex = 2;
@@ -461,12 +475,13 @@
 			// 
 			// FileImportButton
 			// 
-			FileImportButton.Location = new Point(491, 61);
+			FileImportButton.Location = new Point(462, 64);
 			FileImportButton.Name = "FileImportButton";
 			FileImportButton.Size = new Size(165, 31);
 			FileImportButton.TabIndex = 2;
 			FileImportButton.Text = "从文件导入";
 			FileImportButton.UseVisualStyleBackColor = true;
+			FileImportButton.Click += FileImportButton_Click;
 			// 
 			// PageLinkListBox
 			// 
@@ -475,7 +490,7 @@
 			PageLinkListBox.Location = new Point(8, 61);
 			PageLinkListBox.Name = "PageLinkListBox";
 			PageLinkListBox.ScrollAlwaysVisible = true;
-			PageLinkListBox.Size = new Size(477, 114);
+			PageLinkListBox.Size = new Size(450, 114);
 			PageLinkListBox.TabIndex = 1;
 			PageLinkListBox.SelectedIndexChanged += PageLinkListBox_SelectedIndexChanged;
 			// 
@@ -486,8 +501,8 @@
 			labeledInput1.LabelText = "Discrimination";
 			labeledInput1.Location = new Point(8, 29);
 			labeledInput1.Name = "labeledInput1";
-			labeledInput1.Size = new Size(477, 25);
-			labeledInput1.SplitVal = 155;
+			labeledInput1.Size = new Size(450, 25);
+			labeledInput1.SplitVal = 146;
 			labeledInput1.TabIndex = 0;
 			// 
 			// SystemBox
@@ -495,9 +510,9 @@
 			SystemBox.Controls.Add(UserSignTextBox);
 			SystemBox.Controls.Add(label2);
 			SystemBox.Controls.Add(PlatformVisibleButton);
-			SystemBox.Location = new Point(565, 401);
+			SystemBox.Location = new Point(640, 411);
 			SystemBox.Name = "SystemBox";
-			SystemBox.Size = new Size(252, 196);
+			SystemBox.Size = new Size(268, 183);
 			SystemBox.TabIndex = 2;
 			SystemBox.TabStop = false;
 			SystemBox.Text = "系统对接";
@@ -509,7 +524,7 @@
 			UserSignTextBox.Location = new Point(3, 26);
 			UserSignTextBox.Multiline = true;
 			UserSignTextBox.Name = "UserSignTextBox";
-			UserSignTextBox.Size = new Size(246, 126);
+			UserSignTextBox.Size = new Size(262, 115);
 			UserSignTextBox.TabIndex = 3;
 			// 
 			// label2
@@ -523,9 +538,9 @@
 			// 
 			// PlatformVisibleButton
 			// 
-			PlatformVisibleButton.Location = new Point(3, 158);
+			PlatformVisibleButton.Location = new Point(3, 145);
 			PlatformVisibleButton.Name = "PlatformVisibleButton";
-			PlatformVisibleButton.Size = new Size(246, 32);
+			PlatformVisibleButton.Size = new Size(262, 32);
 			PlatformVisibleButton.TabIndex = 2;
 			PlatformVisibleButton.Text = "显示/隐藏凭据文本框";
 			PlatformVisibleButton.UseVisualStyleBackColor = true;
@@ -540,7 +555,7 @@
 			menuStrip1.Location = new Point(0, 0);
 			menuStrip1.Name = "menuStrip1";
 			menuStrip1.Padding = new Padding(7, 2, 0, 2);
-			menuStrip1.Size = new Size(1493, 34);
+			menuStrip1.Size = new Size(1584, 34);
 			menuStrip1.TabIndex = 3;
 			menuStrip1.Text = "menuStrip1";
 			// 
@@ -594,51 +609,54 @@
 			// 
 			// UploadButton
 			// 
-			UploadButton.Location = new Point(565, 603);
+			UploadButton.Location = new Point(643, 603);
 			UploadButton.Name = "UploadButton";
-			UploadButton.Size = new Size(253, 67);
+			UploadButton.Size = new Size(262, 67);
 			UploadButton.TabIndex = 4;
 			UploadButton.Text = "上传到系统";
 			UploadButton.UseVisualStyleBackColor = true;
 			UploadButton.Click += UploadButton_Click;
 			// 
-			// ArticleGeneratorProgressBar
-			// 
-			ArticleGeneratorProgressBar.Location = new Point(8, 101);
-			ArticleGeneratorProgressBar.Name = "ArticleGeneratorProgressBar";
-			ArticleGeneratorProgressBar.Size = new Size(535, 24);
-			ArticleGeneratorProgressBar.TabIndex = 3;
-			ArticleGeneratorProgressBar.Visible = false;
-			// 
 			// PageProcessBox
 			// 
+			PageProcessBox.Controls.Add(SkipAI);
 			PageProcessBox.Controls.Add(ArticleGenerateLog);
 			PageProcessBox.Controls.Add(label1);
 			PageProcessBox.Controls.Add(PageDivClassList);
 			PageProcessBox.Controls.Add(PageLink);
 			PageProcessBox.Controls.Add(PageProcessButton);
 			PageProcessBox.Controls.Add(DetailChecker);
-			PageProcessBox.Controls.Add(ArticleGeneratorProgressBar);
-			PageProcessBox.Location = new Point(4, 401);
+			PageProcessBox.Location = new Point(4, 212);
 			PageProcessBox.Name = "PageProcessBox";
-			PageProcessBox.Size = new Size(555, 196);
+			PageProcessBox.Size = new Size(904, 193);
 			PageProcessBox.TabIndex = 5;
 			PageProcessBox.TabStop = false;
 			PageProcessBox.Text = "链接处理";
+			// 
+			// SkipAI
+			// 
+			SkipAI.AutoSize = true;
+			SkipAI.Font = new Font("微软雅黑 Consolas", 10.6930695F, FontStyle.Regular, GraphicsUnit.Point, 134);
+			SkipAI.Location = new Point(639, 104);
+			SkipAI.Name = "SkipAI";
+			SkipAI.Size = new Size(246, 24);
+			SkipAI.TabIndex = 9;
+			SkipAI.Text = "(调试用）不改写，直接使用原文";
+			SkipAI.UseVisualStyleBackColor = true;
 			// 
 			// ArticleGenerateLog
 			// 
 			ArticleGenerateLog.Font = new Font("微软雅黑 Consolas", 9.267326F, FontStyle.Regular, GraphicsUnit.Point, 134);
 			ArticleGenerateLog.FormattingEnabled = true;
-			ArticleGenerateLog.Location = new Point(276, 99);
+			ArticleGenerateLog.Location = new Point(8, 61);
 			ArticleGenerateLog.Name = "ArticleGenerateLog";
-			ArticleGenerateLog.Size = new Size(264, 89);
+			ArticleGenerateLog.Size = new Size(619, 123);
 			ArticleGenerateLog.TabIndex = 8;
 			// 
 			// label1
 			// 
 			label1.AutoSize = true;
-			label1.Location = new Point(8, 67);
+			label1.Location = new Point(634, 30);
 			label1.Name = "label1";
 			label1.Size = new Size(133, 44);
 			label1.TabIndex = 7;
@@ -649,26 +667,28 @@
 			PageDivClassList.FormattingEnabled = true;
 			PageDivClassList.ItemHeight = 22;
 			PageDivClassList.Items.AddRange(new object[] { "white-wrap", "contentbox" });
-			PageDivClassList.Location = new Point(147, 65);
+			PageDivClassList.Location = new Point(773, 28);
 			PageDivClassList.Name = "PageDivClassList";
 			PageDivClassList.ScrollAlwaysVisible = true;
-			PageDivClassList.Size = new Size(124, 48);
+			PageDivClassList.Size = new Size(124, 70);
 			PageDivClassList.TabIndex = 5;
 			// 
 			// PageLink
 			// 
+			PageLink.Font = new Font("微软雅黑 Consolas", 9.267326F, FontStyle.Regular, GraphicsUnit.Point, 134);
 			PageLink.HideText = '\0';
-			PageLink.InputText = "";
+			PageLink.InputText = "111";
 			PageLink.LabelText = "链接";
-			PageLink.Location = new Point(8, 29);
+			PageLink.Location = new Point(6, 22);
+			PageLink.Margin = new Padding(2);
 			PageLink.Name = "PageLink";
-			PageLink.Size = new Size(533, 25);
-			PageLink.SplitVal = 44;
+			PageLink.Size = new Size(621, 32);
+			PageLink.SplitVal = 50;
 			PageLink.TabIndex = 6;
 			// 
 			// PageProcessButton
 			// 
-			PageProcessButton.Location = new Point(406, 64);
+			PageProcessButton.Location = new Point(765, 154);
 			PageProcessButton.Name = "PageProcessButton";
 			PageProcessButton.Size = new Size(135, 31);
 			PageProcessButton.TabIndex = 5;
@@ -679,7 +699,7 @@
 			// DetailChecker
 			// 
 			DetailChecker.AutoSize = true;
-			DetailChecker.Location = new Point(277, 67);
+			DetailChecker.Location = new Point(636, 157);
 			DetailChecker.Name = "DetailChecker";
 			DetailChecker.Size = new Size(131, 26);
 			DetailChecker.TabIndex = 4;
@@ -694,6 +714,7 @@
 			ArticleClearButton.TabIndex = 4;
 			ArticleClearButton.Text = "清除编辑器";
 			ArticleClearButton.UseVisualStyleBackColor = true;
+			ArticleClearButton.Click += ArticleClearButton_Click;
 			// 
 			// LinkReloadChecker
 			// 
@@ -705,16 +726,10 @@
 			LinkReloadChecker.Text = "切换至列表下一条目";
 			LinkReloadChecker.UseVisualStyleBackColor = true;
 			// 
-			// PictureList
-			// 
-			PictureList.ColorDepth = ColorDepth.Depth32Bit;
-			PictureList.ImageSize = new Size(16, 16);
-			PictureList.TransparentColor = Color.Transparent;
-			// 
 			// ArticleUploadNow
 			// 
 			ArticleUploadNow.AutoSize = true;
-			ArticleUploadNow.Location = new Point(495, 607);
+			ArticleUploadNow.Location = new Point(572, 607);
 			ArticleUploadNow.Name = "ArticleUploadNow";
 			ArticleUploadNow.Size = new Size(62, 26);
 			ArticleUploadNow.TabIndex = 6;
@@ -725,7 +740,7 @@
 			// ArticleUploadLater
 			// 
 			ArticleUploadLater.AutoSize = true;
-			ArticleUploadLater.Location = new Point(495, 638);
+			ArticleUploadLater.Location = new Point(572, 638);
 			ArticleUploadLater.Name = "ArticleUploadLater";
 			ArticleUploadLater.Size = new Size(62, 26);
 			ArticleUploadLater.TabIndex = 6;
@@ -736,7 +751,7 @@
 			// ArticleAsDraft
 			// 
 			ArticleAsDraft.AutoSize = true;
-			ArticleAsDraft.Location = new Point(426, 624);
+			ArticleAsDraft.Location = new Point(503, 624);
 			ArticleAsDraft.Name = "ArticleAsDraft";
 			ArticleAsDraft.Size = new Size(63, 26);
 			ArticleAsDraft.TabIndex = 7;
@@ -748,7 +763,7 @@
 			AutoScaleDimensions = new SizeF(9F, 22F);
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = Color.Linen;
-			ClientSize = new Size(1493, 676);
+			ClientSize = new Size(1584, 760);
 			Controls.Add(ArticleAsDraft);
 			Controls.Add(ArticleUploadLater);
 			Controls.Add(ArticleUploadNow);
@@ -764,7 +779,7 @@
 			Font = new Font("微软雅黑 Consolas", 12.1188116F, FontStyle.Regular, GraphicsUnit.Point, 134);
 			MainMenuStrip = menuStrip1;
 			Name = "Form1";
-			Text = "Laoliu666_Qieyou文章快速填充工具";
+			Text = "Laoliu666_QY文章快速填充工具";
 			ArticleBox.ResumeLayout(false);
 			groupBox1.ResumeLayout(false);
 			groupBox1.PerformLayout();
@@ -822,7 +837,6 @@
 		private LabeledInput ArticleAuthor;
 		private Button UploadButton;
 		private Button LinkDeleteButton;
-		private ProgressBar ArticleGeneratorProgressBar;
 		private Button FileImportButton;
 		private GroupBox PageProcessBox;
 		private LabeledInput PageLink;
@@ -841,7 +855,6 @@
 		private GroupBox PosterGroupBox;
 		private PictureBox PosterPictureView;
 		private GroupBox groupBox1;
-		private ImageList PictureList;
 		private PictureBox ArticlePicturePreview;
 		private Button NextPicButton;
 		private Button PrevPicButton;
@@ -852,5 +865,7 @@
 		private CheckBox ArticleAsDraft;
 		private Button PictureInsertButton;
 		private ListBox ArticleGenerateLog;
+		private Button PictureQuickSizeButton;
+		private CheckBox SkipAI;
 	}
 }

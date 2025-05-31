@@ -1,7 +1,7 @@
 ﻿using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
-namespace QieYouArticleUpdater.Main
+namespace QYArticleUpdater.Main
 {
 	internal class ImageSharpener
 	{

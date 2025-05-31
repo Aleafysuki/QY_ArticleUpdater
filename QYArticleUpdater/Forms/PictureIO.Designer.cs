@@ -1,4 +1,4 @@
-﻿namespace QieYouArticleUpdater
+﻿namespace QYArticleUpdater
 {
 	partial class PictureIO
 	{
@@ -39,6 +39,7 @@
 			PicFileSize = new Label();
 			label1 = new Label();
 			QualitySelector = new ComboBox();
+			PictureUploader = new Button();
 			CopyGenerator = new Button();
 			panel1 = new Panel();
 			groupBox3 = new GroupBox();
@@ -72,8 +73,6 @@
 			inputiframetext = new Label();
 			outputsharediframebox = new TextBox();
 			inputsharediframebox = new TextBox();
-			PicList = new ImageList(components);
-			PictureUploader = new Button();
 			((System.ComponentModel.ISupportInitialize)PictureInput).BeginInit();
 			groupBox1.SuspendLayout();
 			panel1.SuspendLayout();
@@ -193,6 +192,16 @@
 			QualitySelector.Size = new Size(99, 27);
 			QualitySelector.TabIndex = 4;
 			QualitySelector.SelectedIndexChanged += QualitySelector_SelectedIndexChanged;
+			// 
+			// PictureUploader
+			// 
+			PictureUploader.Location = new Point(7, 141);
+			PictureUploader.Name = "PictureUploader";
+			PictureUploader.Size = new Size(205, 37);
+			PictureUploader.TabIndex = 2;
+			PictureUploader.Text = "上传图像";
+			PictureUploader.UseVisualStyleBackColor = true;
+			PictureUploader.Click += Generator_Click;
 			// 
 			// CopyGenerator
 			// 
@@ -552,22 +561,6 @@
 			inputsharediframebox.TabIndex = 0;
 			inputsharediframebox.TextChanged += inputsharediframebox_TextChanged;
 			// 
-			// PicList
-			// 
-			PicList.ColorDepth = ColorDepth.Depth32Bit;
-			PicList.ImageSize = new Size(16, 16);
-			PicList.TransparentColor = Color.Transparent;
-			// 
-			// PictureUploader
-			// 
-			PictureUploader.Location = new Point(7, 141);
-			PictureUploader.Name = "PictureUploader";
-			PictureUploader.Size = new Size(205, 37);
-			PictureUploader.TabIndex = 2;
-			PictureUploader.Text = "上传图像";
-			PictureUploader.UseVisualStyleBackColor = true;
-			PictureUploader.Click += Generator_Click;
-			// 
 			// PictureIO
 			// 
 			AutoScaleDimensions = new SizeF(8F, 19F);
@@ -640,7 +633,6 @@
 		private Label PicFileSize;
 		private GroupBox groupBox4;
 		private Button ImageSherpen;
-		private ImageList PicList;
 		private Button PictureUploader;
 	}
 }

@@ -6,8 +6,9 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using static QYArticleUpdater.Main.Caesar;
 
-namespace QieYouArticleUpdater.Main
+namespace QYArticleUpdater.Main
 {
 	internal class WebpageAccess
 	{

@@ -4,8 +4,8 @@ using System.Net;
 using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Collections.Specialized;
-using QieYouArticleUpdater.Main;
-namespace QieYouArticleUpdater
+using QYArticleUpdater.Main;
+namespace QYArticleUpdater
 {
 	public partial class PictureIO : Form
 	{
@@ -15,10 +15,10 @@ namespace QieYouArticleUpdater
 		{
 			InitializeComponent();
 			this.PictureInput.AllowDrop = true;
-			// ×¢²áDragEnterÊÂ¼ş
+			// ×¢ï¿½ï¿½DragEnterï¿½Â¼ï¿½
 			this.PictureInput.DragEnter += new DragEventHandler(PictureInput_DragEnter);
 
-			// ×¢²áDragDropÊÂ¼ş
+			// ×¢ï¿½ï¿½DragDropï¿½Â¼ï¿½
 			this.PictureInput.DragDrop += new DragEventHandler(PictureInput_DragDrop);
 			if (File.Exists("C:\\settings.txt") || File.Exists("settings.txt"))
 			{
@@ -56,9 +56,9 @@ namespace QieYouArticleUpdater
 				{
 					if (file.EndsWith(".jpg") || file.EndsWith(".jpeg") || file.EndsWith(".png") || file.EndsWith(".bmp") || file.EndsWith(".webp"))
 					{
-						// ÉèÖÃPictureBoxµÄÍ¼Ïñ
+						// ï¿½ï¿½ï¿½ï¿½PictureBoxï¿½ï¿½Í¼ï¿½ï¿½
 						this.PictureInput.Image = Image.FromFile(file);
-						break; // Ö»´¦ÀíµÚÒ»¸öÍ¼ÏñÎÄ¼ş
+						break; // Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ä¼ï¿½
 					}
 				}
 			}
@@ -76,21 +76,21 @@ namespace QieYouArticleUpdater
 		{
 			if (e.Data.GetDataPresent(DataFormats.FileDrop))
 			{
-				// ¼ì²éÍÏ·ÅµÄÊı¾İÊÇ·ñ°üº¬ÎÄ¼ş
+				// ï¿½ï¿½ï¿½ï¿½Ï·Åµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
 				string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-				// ¼ì²éÊÇ·ñÓĞÍ¼ÏñÎÄ¼ş
+				// ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ä¼ï¿½
 				foreach (var file in files)
 				{
 					if (file.EndsWith(".jpg") || file.EndsWith(".jpeg") || file.EndsWith(".png") || file.EndsWith(".bmp") || file.EndsWith(".webp"))
 					{
-						e.Effect = DragDropEffects.Copy; // ÔÊĞí¸´ÖÆ
+						e.Effect = DragDropEffects.Copy; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 						return;
 					}
 				}
 			}
 			PictureInput_BackgroundImageChanged();
-			e.Effect = DragDropEffects.None; // ²»ÔÊĞíÈÎºÎÍÏ·Å
+			e.Effect = DragDropEffects.None; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½Ï·ï¿½
 			if (e.Data.GetDataPresent(DataFormats.Text))
 			{
 				e.Effect = DragDropEffects.All;
@@ -110,35 +110,35 @@ namespace QieYouArticleUpdater
 
 		private void Generator_Click(object sender, EventArgs e)
 		{
-			// È·±£ÓĞÍ¼ÏñÒª´¦Àí
+			// È·ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½
 			if (PictureInput.Image == null) return;
 
-			// ÉèÖÃ±àÂëÆ÷²ÎÊıÀ´Ö¸¶¨JPEGÖÊÁ¿
+			// ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½JPEGï¿½ï¿½ï¿½ï¿½
 			ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
 			EncoderParameters encoderParams = new EncoderParameters(1);
 
 			int quality = Convert.ToInt32(QualitySelector.SelectedItem.ToString().TrimEnd('%'));
 			encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, quality);
-			// ´´½¨Ò»¸öĞÂµÄBitmap¶ÔÏóÓÃÓÚ±£´æµ÷Õû¹ı´óĞ¡»ò¸ñÊ½µÄÍ¼Ïñ
+			// ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Âµï¿½Bitmapï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½Ê½ï¿½ï¿½Í¼ï¿½ï¿½
 			Bitmap bitmap = new Bitmap(PictureInput.Image);
-			// Éú³ÉÄÚ´æÁ÷
+			// ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½
 			using (MemoryStream ms = new MemoryStream())
 			{
-				// ½«bitmap±£´æÎªJPEG¸ñÊ½µ½ÄÚ´æÁ÷ÖĞ£¬Í¬Ê±Ó¦ÓÃJPEGÖÊÁ¿ÉèÖÃ
+				// ï¿½ï¿½bitmapï¿½ï¿½ï¿½ï¿½ÎªJPEGï¿½ï¿½Ê½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½Í¬Ê±Ó¦ï¿½ï¿½JPEGï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				bitmap.Save(ms, jpgEncoder, encoderParams);
 
-				// ´ÓÄÚ´æÁ÷´´½¨ĞÂµÄImage¶ÔÏó
+				// ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½Imageï¿½ï¿½ï¿½ï¿½
 				Image img = Image.FromStream(ms);
 				img = ResizeImage(img, new Size(Convert.ToInt32(resolutionX.Text), Convert.ToInt32(resolutionY.Text)));
 
 				//img = ResizeImage(img, new Size(Convert.ToInt32(resolutionX.Text), Convert.ToInt32(resolutionY.Text)));
 				img.Save(OutputPath.Text + "\\" + Suffix1.Text + "-" + DateTime.Now.ToString("MM-dd-hh-mm-ss") + ".jpg", ImageFormat.Jpeg);
 
-				// ÊÍ·Å×ÊÔ´
+				// ï¿½Í·ï¿½ï¿½ï¿½Ô´
 				img.Dispose();
 			}
 
-			// ÊÍ·Åbitmap×ÊÔ´
+			// ï¿½Í·ï¿½bitmapï¿½ï¿½Ô´
 			bitmap.Dispose();
 			//if(!int.TryParse(resolutionY.Text,))resolutionY.Text = "1920";
 
@@ -158,44 +158,44 @@ namespace QieYouArticleUpdater
 		}
 		private void CopyGenerator_Click(object sender, EventArgs e)
 		{
-			// È·±£ÓĞÍ¼ÏñÒª´¦Àí
+			// È·ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½
 			if (PictureInput.Image == null) return;
 
-			// ÉèÖÃ±àÂëÆ÷²ÎÊıÀ´Ö¸¶¨JPEGÖÊÁ¿
+			// ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½JPEGï¿½ï¿½ï¿½ï¿½
 			ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
 			EncoderParameters encoderParams = new EncoderParameters(1);
 
 			int quality = Convert.ToInt32(QualitySelector.SelectedItem.ToString().TrimEnd('%'));
 			encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, quality);
-			// ´´½¨Ò»¸öĞÂµÄBitmap¶ÔÏóÓÃÓÚ±£´æµ÷Õû¹ı´óĞ¡»ò¸ñÊ½µÄÍ¼Ïñ
+			// ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Âµï¿½Bitmapï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½Ê½ï¿½ï¿½Í¼ï¿½ï¿½
 			Bitmap bitmap = new Bitmap(PictureInput.Image);
-			// Éú³ÉÄÚ´æÁ÷
+			// ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½
 			using (MemoryStream ms = new MemoryStream())
 			{
-				// ½«bitmap±£´æÎªJPEG¸ñÊ½µ½ÄÚ´æÁ÷ÖĞ£¬Í¬Ê±Ó¦ÓÃJPEGÖÊÁ¿ÉèÖÃ
+				// ï¿½ï¿½bitmapï¿½ï¿½ï¿½ï¿½ÎªJPEGï¿½ï¿½Ê½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½Í¬Ê±Ó¦ï¿½ï¿½JPEGï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				bitmap.Save(ms, jpgEncoder, encoderParams);
 
-				// ´ÓÄÚ´æÁ÷´´½¨ĞÂµÄImage¶ÔÏó
+				// ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½Imageï¿½ï¿½ï¿½ï¿½
 				Image img = Image.FromStream(ms);
 				img = ResizeImage(img, new Size(Convert.ToInt32(resolutionX.Text), Convert.ToInt32(resolutionY.Text)));
 				img.Save(OutputPath.Text + "\\" + Suffix1.Text + ".jpg", ImageFormat.Jpeg);
 				//img = Image.FromFile($"{OutputPath.Text}\\{Suffix1.Text}.jpg");
 
-				// ´´½¨ÎÄ¼şÂ·¾¶¼¯ºÏ
+				// ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				StringCollection filePaths = new StringCollection();
 				string tempFilePath = OutputPath.Text + "\\" + Suffix1.Text + ".jpg";
 				filePaths.Add(tempFilePath);
 
-				// ½«ÎÄ¼şÂ·¾¶¼¯ºÏ·ÅÈë¼ôÌù°å
+				// ï¿½ï¿½ï¿½Ä¼ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				Clipboard.SetFileDropList(filePaths);
-				// ½«Í¼Ïñ¸´ÖÆµ½¼ôÌù°å
+				// ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				//Clipboard.SetImage(img);
 
-				// ÊÍ·Å×ÊÔ´
+				// ï¿½Í·ï¿½ï¿½ï¿½Ô´
 				img.Dispose();
 			}
 
-			// ÊÍ·Åbitmap×ÊÔ´
+			// ï¿½Í·ï¿½bitmapï¿½ï¿½Ô´
 			bitmap.Dispose();
 
 			//Clipboard.SetImage(img);
@@ -237,29 +237,29 @@ namespace QieYouArticleUpdater
 			else return;
 			if (PictureInput.Image != null)
 			{
-				// »ñÈ¡PictureBoxµÄ´óĞ¡
+				// ï¿½ï¿½È¡PictureBoxï¿½Ä´ï¿½Ğ¡
 				Size picBoxSize = PictureInput.Size;
 
-				// »ñÈ¡PictureBoxÖĞÍ¼ÏñµÄÊµ¼Ê´óĞ¡
+				// ï¿½ï¿½È¡PictureBoxï¿½ï¿½Í¼ï¿½ï¿½ï¿½Êµï¿½Ê´ï¿½Ğ¡
 				Size imgSize = PictureInput.Image.Size;
 
-				// ¼ÆËãÍ¼ÏñËõ·Å±ÈÀı
+				// ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½Å±ï¿½ï¿½ï¿½
 				double scaleWidth = (double)picBoxSize.Width / imgSize.Width;
 				double scaleHeight = (double)picBoxSize.Height / imgSize.Height;
 
-				// ¸ù¾İPictureBoxµÄSizeModeÈ·¶¨Ê¹ÓÃÄÄ¸öËõ·Å±ÈÀı
+				// ï¿½ï¿½ï¿½ï¿½PictureBoxï¿½ï¿½SizeModeÈ·ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½Å±ï¿½ï¿½ï¿½
 				double scale = Math.Max(scaleWidth, scaleHeight);
 				if (PictureInput.SizeMode == PictureBoxSizeMode.AutoSize || PictureInput.SizeMode == PictureBoxSizeMode.Normal)
 				{
-					scale = 1.0; // Èç¹ûÍ¼Æ¬Ã»ÓĞ±»Ëõ·Å£¬ÔòËõ·Å±ÈÀıÎª1
+					scale = 1.0; // ï¿½ï¿½ï¿½Í¼Æ¬Ã»ï¿½Ğ±ï¿½ï¿½ï¿½ï¿½Å£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å±ï¿½ï¿½ï¿½Îª1
 				}
 
-				// »ñÈ¡µã»÷Î»ÖÃÏà¶ÔÓÚPictureBoxµÄ×ø±ê
+				// ï¿½ï¿½È¡ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½PictureBoxï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				clickPoint = new Point(e.X, e.Y);
-				// ¿¼ÂÇµ½PictureBox¿ÉÄÜµÄ¹ö¶¯Æ«ÒÆ
+				// ï¿½ï¿½ï¿½Çµï¿½PictureBoxï¿½ï¿½ï¿½ÜµÄ¹ï¿½ï¿½ï¿½Æ«ï¿½ï¿½
 				Point scrollOffset = PictureInput.Parent is Panel panel ? new Point(panel.AutoScrollPosition.X, panel.AutoScrollPosition.Y) : Point.Empty;
 
-				// ¼ÆËãµã»÷µãÔÚÔ­Í¼ÖĞµÄ×ø±ê
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­Í¼ï¿½Ğµï¿½ï¿½ï¿½ï¿½ï¿½
 				Point originalPoint = new Point((int)((clickPoint.X - scrollOffset.X) / scale), (int)((clickPoint.Y - scrollOffset.Y) / scale));
 
 				groupBox3.Enabled = true;
@@ -267,7 +267,7 @@ namespace QieYouArticleUpdater
 				if (originalPoint.Y < 0) originalPoint.Y = 0;
 				if (originalPoint.X > picBoxSize.Width) originalPoint.X = picBoxSize.Width;
 				if (originalPoint.Y > picBoxSize.Height) originalPoint.Y = picBoxSize.Height;
-				ClickedPoint.Text = $"ÒÑÑ¡ÖĞ×ø±ê: {originalPoint.X}, {originalPoint.Y}";
+				ClickedPoint.Text = $"ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: {originalPoint.X}, {originalPoint.Y}";
 			}
 		}
 		private Bitmap CropImage(Image source, Rectangle rect)
@@ -289,14 +289,14 @@ namespace QieYouArticleUpdater
 		{
 			Image originalImage = PictureInput.Image;
 
-			// ·Ö¸îµã
+			// ï¿½Ö¸ï¿½ï¿½
 			int splitX = clickPoint.X;
 			int splitY = clickPoint.Y;
 			if (splitX < 0) splitX = 0;
 			if (splitY < 0) splitY = 0;
 			if (splitX > originalImage.Width) splitX = originalImage.Width;
 			if (splitY > originalImage.Height) splitY = originalImage.Height;
-			// ·Ö¸îÍ¼Ïñ
+			// ï¿½Ö¸ï¿½Í¼ï¿½ï¿½
 			Bitmap topLeft = CropImage(originalImage, new Rectangle(0, 0, splitX, splitY));
 			Bitmap topRight = CropImage(originalImage, new Rectangle(splitX, 0, originalImage.Width - splitX, splitY));
 			Bitmap bottomLeft = CropImage(originalImage, new Rectangle(0, splitY, splitX, originalImage.Height - splitY));
@@ -307,39 +307,39 @@ namespace QieYouArticleUpdater
 			Bitmap Left = CropImage(originalImage, new Rectangle(0, 0, splitX, originalImage.Height));
 			Bitmap Right = CropImage(originalImage, new Rectangle(splitX, 0, originalImage.Width - splitX, originalImage.Height));
 
-			if (sender.ToString().Contains("×óÉÏ"))
+			if (sender.ToString().Contains("ï¿½ï¿½ï¿½ï¿½"))
 			{
 				PictureInput.Image = topLeft;
 			}
-			else if (sender.ToString().Contains("×óÏÂ"))
+			else if (sender.ToString().Contains("ï¿½ï¿½ï¿½ï¿½"))
 			{
 				PictureInput.Image = bottomLeft;
 			}
-			else if (sender.ToString().Contains("ÓÒÉÏ"))
+			else if (sender.ToString().Contains("ï¿½ï¿½ï¿½ï¿½"))
 			{
 				PictureInput.Image = topRight;
 			}
-			else if (sender.ToString().Contains("ÓÒÏÂ"))
+			else if (sender.ToString().Contains("ï¿½ï¿½ï¿½ï¿½"))
 			{
 				PictureInput.Image = bottomRight;
 			}
-			else if (sender.ToString().Contains("ÉÏ"))
+			else if (sender.ToString().Contains("ï¿½ï¿½"))
 			{
 				PictureInput.Image = Top;
 			}
-			else if (sender.ToString().Contains("ÏÂ"))
+			else if (sender.ToString().Contains("ï¿½ï¿½"))
 			{
 				PictureInput.Image = Bottom;
 			}
-			else if (sender.ToString().Contains("×ó"))
+			else if (sender.ToString().Contains("ï¿½ï¿½"))
 			{
 				PictureInput.Image = Left;
 			}
-			else if (sender.ToString().Contains("ÓÒ"))
+			else if (sender.ToString().Contains("ï¿½ï¿½"))
 			{
 				PictureInput.Image = Right;
 			}
-			ClickedPoint.Text = $"ÒÑÑ¡ÖĞ×ø±ê: ";
+			ClickedPoint.Text = $"ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: ";
 			groupBox3.Enabled = false;
 			img = PictureInput.Image;
 			PictureInput_BackgroundImageChanged();
@@ -366,36 +366,36 @@ namespace QieYouArticleUpdater
 		}
 		private void TryPasteFromClipboard()
 		{
-			// ³¢ÊÔÒÔÎÄ±¾ĞÎÊ½¶ÁÈ¡¼ôÌù°åÄÚÈİ
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½Ê½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			var clipboardText = Clipboard.GetText();
 			if (!string.IsNullOrEmpty(clipboardText) && clipboardText.StartsWith("data:image"))
 			{
 				try
 				{
-					// ½«Êı¾İURI×ª»»ÎªImage¶ÔÏó
+					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½URI×ªï¿½ï¿½ÎªImageï¿½ï¿½ï¿½ï¿½
 					PictureInput.Image = ConvertDataUriToImage(clipboardText);
 				}
 				catch (Exception ex)
 				{
-					MessageBox.Show("ÎŞ·¨´ÓÊı¾İURI¼ÓÔØÍ¼Æ¬: " + ex.Message);
+					MessageBox.Show("ï¿½Ş·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½URIï¿½ï¿½ï¿½ï¿½Í¼Æ¬: " + ex.Message);
 				}
 			}
 		}
 
 		private Image ConvertDataUriToImage(string dataUri)
 		{
-			// ÒÆ³ı"data:image/png;base64,"Ç°×º
+			// ï¿½Æ³ï¿½"data:image/png;base64,"Ç°×º
 			string base64String = dataUri.Split(',')[1];
 			byte[] imageBytes = Convert.FromBase64String(base64String);
 
-			// Ê¹ÓÃÄÚ´æÁ÷´´½¨Í¼Ïñ
+			// Ê¹ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
 			using (MemoryStream ms = new MemoryStream(imageBytes))
 			{
 				return Image.FromStream(ms);
 			}
 		}
 		/// <summary>
-		/// Õ³ÌùÍ¼Ïñ
+		/// Õ³ï¿½ï¿½Í¼ï¿½ï¿½
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
@@ -413,7 +413,7 @@ namespace QieYouArticleUpdater
 
 		private void WindowTop(object sender, EventArgs e)
 		{
-			TopMost = ´°¿ÚÖÃ¶¥ToolStripMenuItem.Checked;
+			TopMost = çª—å£ç½®é¡¶ToolStripMenuItem.Checked;
 		}
 
 		private void TransparencySet(object sender, EventArgs e)
@@ -442,31 +442,31 @@ namespace QieYouArticleUpdater
 		private long PicLengthCalculate(Image img)
 
 		{
-			// È·±£ÓĞÍ¼ÏñÒª´¦Àí
+			// È·ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½
 			if (PictureInput.Image == null) return 0;
 
-			// ÉèÖÃ±àÂëÆ÷²ÎÊıÀ´Ö¸¶¨JPEGÖÊÁ¿
+			// ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½JPEGï¿½ï¿½ï¿½ï¿½
 			ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
 			EncoderParameters encoderParams = new EncoderParameters(1);
 
 			int quality = Convert.ToInt32(Convert.ToString(QualitySelector.SelectedItem).TrimEnd('%'));
 			encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, quality);
 			img = ResizeImage(img, new Size(Convert.ToInt32(resolutionX.Text), Convert.ToInt32(resolutionY.Text)));
-			// ´´½¨Ò»¸öĞÂµÄBitmap¶ÔÏóÓÃÓÚ±£´æµ÷Õû¹ı´óĞ¡»ò¸ñÊ½µÄÍ¼Ïñ
+			// ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Âµï¿½Bitmapï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½Ê½ï¿½ï¿½Í¼ï¿½ï¿½
 			Bitmap bitmap = new Bitmap(img);
-			// Éú³ÉÄÚ´æÁ÷
+			// ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½
 			MemoryStream ms = new MemoryStream();
 
-			// ½«bitmap±£´æÎªJPEG¸ñÊ½µ½ÄÚ´æÁ÷ÖĞ£¬Í¬Ê±Ó¦ÓÃJPEGÖÊÁ¿ÉèÖÃ
+			// ï¿½ï¿½bitmapï¿½ï¿½ï¿½ï¿½ÎªJPEGï¿½ï¿½Ê½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½Í¬Ê±Ó¦ï¿½ï¿½JPEGï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			bitmap.Save(ms, jpgEncoder, encoderParams);
-			long len = ms.Length;//»ñÈ¡Í¼Æ¬´óĞ¡
+			long len = ms.Length;//ï¿½ï¿½È¡Í¼Æ¬ï¿½ï¿½Ğ¡
 
 
-			// ÊÍ·Å×ÊÔ´
+			// ï¿½Í·ï¿½ï¿½ï¿½Ô´
 			img.Dispose();
 
 
-			// ÊÍ·Åbitmap×ÊÔ´
+			// ï¿½Í·ï¿½bitmapï¿½ï¿½Ô´
 			bitmap.Dispose();
 			return len;
 		}
@@ -480,12 +480,12 @@ namespace QieYouArticleUpdater
 		{
 			if (PictureInput.Image != null)
 			{
-				// ¶ÔPictureBoxÖĞµÄÍ¼Ïñ½øĞĞÈñ»¯´¦Àí
+				// ï¿½ï¿½PictureBoxï¿½Ğµï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ñ»¯´ï¿½ï¿½ï¿½
 				Bitmap originalImage = new Bitmap(PictureInput.Image);
-				Bitmap sharpenedImage = ImageSharpener.Sharpen(originalImage, 1.5f); // µ÷ÕûfactorÖµÒÔ¿ØÖÆÈñ»¯³Ì¶È
+				Bitmap sharpenedImage = ImageSharpener.Sharpen(originalImage, 1.5f); // ï¿½ï¿½ï¿½ï¿½factorÖµï¿½Ô¿ï¿½ï¿½ï¿½ï¿½ñ»¯³Ì¶ï¿½
 
-				// ½«´¦ÀíºóµÄÍ¼ÏñÉèÖÃ»ØPictureBox
-				PictureInput.Image?.Dispose(); // ÊÍ·ÅÔ­Ê¼Í¼Ïñ×ÊÔ´
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½PictureBox
+				PictureInput.Image?.Dispose(); // ï¿½Í·ï¿½Ô­Ê¼Í¼ï¿½ï¿½ï¿½ï¿½Ô´
 				PictureInput.Image = sharpenedImage;
 			}
 			PictureInput_BackgroundImageChanged();
@@ -496,20 +496,21 @@ namespace QieYouArticleUpdater
 			PictureInput_BackgroundImageChanged();
 		}
 		#endregion
-		public void PicTransmission(ImageList list)
+		Image[] MainFormImage;
+		public void PicTransmission(Image[] images)
 		{
-			PicList = list;
+			MainFormImage = images;
 		}
 		#region iFrames
 		/// <summary>
-		/// ×ª»»iframe
+		/// ×ªï¿½ï¿½iframe
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		private void convertIframeButton_Click(object sender, EventArgs e)
 		{
-			if (inputsharediframebox.Text.StartsWith("<iframe"))//Ê¾ÀıÊäÈë£º<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=113809956084766&bvid=BV1XacweXEC2&cid=27816494236&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
-			{//Ô¤ÆÚÊä³ö£º<p style = "text-align: center;"><iframe id="vplay" frameborder="0"  src="//player.bilibili.com/player.html?isOutside=true&aid=113804218271116&bvid=BV1yscHeFEMt&cid=27798341903&p=1&autoplay=0" allowFullScreen="true"></iframe></p>
+			if (inputsharediframebox.Text.StartsWith("<iframe"))//Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ë£º<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=113809956084766&bvid=BV1XacweXEC2&cid=27816494236&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+			{//Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½<p style = "text-align: center;"><iframe id="vplay" frameborder="0"  src="//player.bilibili.com/player.html?isOutside=true&aid=113804218271116&bvid=BV1yscHeFEMt&cid=27798341903&p=1&autoplay=0" allowFullScreen="true"></iframe></p>
 				outputsharediframebox.Text = "<iframe id=\"vplay\" frameborder=\"0\"  "
 					+ inputsharediframebox.Text.Replace("<iframe", string.Empty).Replace("\" scrolling=\"no\" border=\"0\" frameborder=\"no\" framespacing=\"0\" allowfullscreen=\"true\"></iframe>", string.Empty)
 					+ "&autoplay=0\" allowFullScreen=\"true\"></iframe>";

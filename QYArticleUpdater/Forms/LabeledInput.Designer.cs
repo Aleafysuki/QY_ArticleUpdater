@@ -1,4 +1,4 @@
-﻿namespace QieYouArticleUpdater
+﻿namespace QYArticleUpdater
 {
 	partial class LabeledInput
 	{

@@ -3,9 +3,9 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using static QieYouArticleUpdater.Main.DeepSeekChatCompletion;
+using static QYArticleUpdater.Main.DeepSeekChatCompletion;
 
-namespace QieYouArticleUpdater.Main
+namespace QYArticleUpdater.Main
 {
 	internal class WebCommunication
 	{

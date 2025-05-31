@@ -1,7 +1,8 @@
-﻿using QieYouArticleUpdater.FileRW;
-using QieYouArticleUpdater.Main;
+﻿using QYArticleUpdater.FileRW;
+using QYArticleUpdater.Main;
+using System.Text.RegularExpressions;
 
-namespace QieYouArticleUpdater
+namespace QYArticleUpdater
 {
 	public partial class Form1 : Form
 	{
@@ -78,11 +79,12 @@ namespace QieYouArticleUpdater
 			TextAlignCenter();
 		}
 		#endregion
-
+		Image[] ArticleImages;
+		string[] ArticleImagesStr;
 		private async void PageProcessButton_Click(object sender, EventArgs e)
 		{
-			/* log的调用方法：ArticleGenerateLog.Items.Add(string);
-			 * log包含下面几种，每种都要有【OK】【ERROR】两种预案：
+			/* log的调用方法：Log("TYPE", "INFO");
+			 * log包含下面几种，每种都要有【OK】【ERROR】至少两种预案：
 			 * 1.获取文章链接
 			 * 2.获取页面内容
 			 * 3.获取指定的content并转化为纯文字
@@ -101,45 +103,62 @@ namespace QieYouArticleUpdater
 			}
 			string WebContent = string.Empty;
 			string OriginalArticle = string.Empty;
-			Image[] ArticleImages;
+
 			// 获取页面内容
 			try
 			{
 				WebContent = webpage.GetWebpageContent(PageLink.InputText);
+				Log("OK", "已链接指定网页");
 			}
 			catch (Exception)
 			{
-				ArticleGenerateLog.Items.Add("[ERROR] 无法获取页面内容");
+				Log("ERROR", "无法获取页面内容");
 				return;
 			}
+			Log("OK", "已获取页面内容");
 			// 获取指定div
 			try
 			{
 				OriginalArticle = webpage.ExtractTextByClass(WebContent, PageDivClassList.SelectedItem.ToString());
+				Log("OK", "指定的网页div元素已找到");
 				//ArticleImages = webpage.GetImages(WebContent, PageDivClassList.SelectedItem.ToString());
 				ArticleImages = webpage.GetImages(WebContent, "article");
+				Log("OK", "已获取内文图片");
 			}
 			catch (Exception)
 			{
-				ArticleGenerateLog.Items.Add("[ERROR] 页面指定部分的div未找到");
+
+				Log("ERROR", "页面指定部分的div未找到");
 				return;
 			}
+
 			if (ArticleImages.Length > 0) ArticlePicturePreview.Image = ArticleImages[0];
 			//测试用
 			//Article.Text = webpage.GetWebpageContent(PageLink.InputText);
 
 			//Article.Text = webpage.ExtractTextByClass(webpage.GetWebpageContent(PageLink.InputText), PageDivClassList.SelectedItem.ToString());
 			//Thread ProgressBarRefresh = new Thread(new ThreadStart(ProgressBarRefreshTask));
-
+			if (SkipAI.Checked)
+			{
+				Article.Text = OriginalArticle;
+				return;
+			}
 			try
 			{
+				Log("INFO", "已向AI发送请求，正在等待回复");
 				Article.Text = await communication.DS_Message(OriginalArticle);
+				Log("OK", "已获取AI返回信息");
 			}
 			catch (Exception exp)
 			{
-				ArticleGenerateLog.Items.Add(string.Format($"[ERROR] 与AI API通信出现错误:{0}", exp));
+				Log("ERROR", string.Format($"与AI API通信出现错误:{0}", exp));
 			}
 
+		}
+		public void Log(string type, string info)
+		{
+			ArticleGenerateLog.Items.Add(string.Format($"[{type}] {info}"));
+			ArticleGenerateLog.SelectedIndex = ArticleGenerateLog.Items.Count - 1;
 		}
 		private void PlatformVisibleButton_Click(object sender, EventArgs e)
 		{
@@ -159,7 +178,7 @@ namespace QieYouArticleUpdater
 			string LinkList = string.Empty;
 			foreach (string item in PageLinkListBox.Items)
 			{
-				LinkList += (item + '\n');
+				LinkList += item + '\n';
 			}
 			//editWindow.Controls.Find("PromptText",true). PageLinkListBox.Items
 			editWindow.SetContent(LinkList);
@@ -176,7 +195,7 @@ namespace QieYouArticleUpdater
 
 		private void PageLinkListBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			ArticleGenerateLog.Items.Clear();
+
 			if (PageLinkListBox.SelectedItem != null)
 			{
 				PageLink.InputText = PageLinkListBox.SelectedItem.ToString();
@@ -208,9 +227,9 @@ namespace QieYouArticleUpdater
 				{ "zh_posterUp","2" },
 				{ "zh_posterUp2", "1" },
 				{ "zh_posterUp3", "1" },
-				{ "zh_detail", Article.Text }
+				{ "zh_detail", TransformText(Article.Text) }
 			};
-			
+
 			try
 			{
 				string response = await uploader.UploadArticle(formData, posterFilePath);
@@ -220,6 +239,17 @@ namespace QieYouArticleUpdater
 			{
 				MessageBox.Show($"Error: {ex.Message}");
 			}*/
+		}
+		static string TransformText(string input)
+		{
+			// 使用正则表达式匹配所有的 <p> 标签，并确保它们不是包含 <img> 的标签
+			string pattern = @"<p>(?!.*?<img\b).*?</p>";
+			string replacement = "<p style=\"text-align: start;\">$&</p>";
+
+			// 替换所有匹配的 <p> 标签
+			string result = Regex.Replace(input, pattern, replacement, RegexOptions.Singleline);
+
+			return result;
 		}
 		private void SelectPosterButton_Click(object sender, EventArgs e)
 		{
@@ -237,21 +267,142 @@ namespace QieYouArticleUpdater
 		private void PictureEditButton_Click(object sender, EventArgs e)
 		{
 			PictureIO picedit = new PictureIO();
-			picedit.PicTransmission(PictureList);
+			picedit.PicTransmission(ArticleImages);
 			picedit.ShowDialog();
 		}
-
-		private void PictureInsertButton_Click(object sender, EventArgs e)
+		int ArticlePicNum = 0;
+		private async void PictureInsertButton_Click(object sender, EventArgs e)
 		{
 			//插图
 			//<p style="text-align: center;"><img src="https://img.qieyou.com/editor/6835125b76104.jpg" alt="" data-href="" style=""></p>
 			PicUpload uploader = new PicUpload();
-			if(ArticlePicturePreview.Image==null)return;
-			var PictureURL = uploader.PictureUpload(ArticlePicturePreview.Image);
+			Regex reg = new Regex("https.*(jpe?g|png)");
+			if (ArticlePicturePreview.Image == null) return;
+			ArticleImagesStr = new string[ArticleImages.Length];
+			var picReturnStr = ArticleImagesStr[ArticlePicNum];
+			if (ArticleImagesStr[ArticlePicNum] == null)
+			{
+				picReturnStr = await uploader.PictureUpload(ArticlePicturePreview.Image);
+			}
+
+			Match match = reg.Match(picReturnStr);
+			string PictureURL = match.Value.Replace(@"\", string.Empty);
+			if (match.Success && picReturnStr.Contains("\"errno\":0"))
+			{
+				Log("OK", $"已上传图片 - {PictureURL}");
+				ArticleImagesStr[ArticlePicNum] = picReturnStr;
+			}
+			else
+			{
+				MessageBox.Show($"图片上传失败 - {picReturnStr}");
+				Log("ERROR", $"图片上传失败 - {picReturnStr}");
+				return;
+			}
 			if (PictureURL != null)
 			{
-				Article.SelectedText.Insert(0, String.Format($"<p style=\"text-align: center;\"><img src=\"{PictureURL}\" alt=\"\" data-href=\"\" style=\"\"></p>"));
+				InsertCustomStringAtCursor(Article, string.Format($"<p style=\"text-align: center;\"><img src=\"{PictureURL}\" alt=\"\" data-href=\"\" style=\"\"></p>"));
 			}
+		}
+		private void InsertCustomStringAtCursor(RichTextBox richTextBox, string customString)
+		{
+			// 获取当前光标位置
+			int cursorPosition = richTextBox.SelectionStart;
+
+			// 在光标位置插入自定义字符串
+			richTextBox.SelectedText = customString;
+
+			// 可选：将光标移动到插入文本之后
+			richTextBox.SelectionStart = cursorPosition + customString.Length;
+			richTextBox.ScrollToCaret(); // 滚动到光标位置
+		}
+		private void PrevPicButton_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				if (ArticlePicNum <= 0)
+				{
+					return;
+				}
+				else
+				{
+					ArticlePicturePreview.Image = ArticleImages[--ArticlePicNum];
+				}
+			}
+			catch { }
+		}
+
+		private void NextPicButton_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				if (ArticlePicNum > ArticleImages.Length - 1)
+				{
+					return;
+				}
+				else
+				{
+					ArticlePicturePreview.Image = ArticleImages[++ArticlePicNum];
+				}
+			}
+			catch { }
+		}
+		/// <summary>
+		/// 清除所有编辑器内的内容，为下一篇文章做准备
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ArticleClearButton_Click(object sender, EventArgs e)
+		{
+			ArticleGenerateLog.Items.Clear();
+			foreach (var item in ArticleImages)
+			{
+				item.Dispose();
+			}
+			ArticlePicNum = 0;
+			ArticlePicturePreview.Image = null;
+			PosterPictureView.Image = null;
+			PictureFileNameLabel.Text = string.Empty;
+			Article.Text = string.Empty;
+			ArticleTitle.InputText = string.Empty;
+			ArticleTags.InputText = string.Empty;
+			if (LinkReloadChecker.Checked)
+			{
+				try
+				{
+					++PageLinkListBox.SelectedIndex;
+					PageLink.InputText = PageLinkListBox.SelectedItem.ToString();
+					Log("INFO", "已清空并装填下一个链接");
+				}
+				catch { }
+			}
+		}
+
+		private void ArticlePicturePreview_Paint(object sender, PaintEventArgs e)
+		{
+			if (ArticlePicturePreview.Image == null) return;
+			PictureFileNameLabel.Text = string.Format($"共有{ArticleImages.Length}张图片 - 当前{ArticlePicNum + 1} / {ArticleImages.Length + 1}\n分辨率{ArticlePicturePreview.Image.Width}*{ArticlePicturePreview.Image.Height}");
+			if (ArticleImagesStr[ArticlePicNum] != string.Empty)
+			{
+				PictureFileNameLabel.Text += $"\nlink={ArticleImagesStr[ArticlePicNum]}";
+			}
+		}
+
+		private void FileImportButton_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void PictureQuickSizeButton_Click(object sender, EventArgs e)
+		{
+			PictureIO picIO = new PictureIO();
+			for (int i = 0; i < ArticleImages.Length; i++)
+			{
+				if (ArticleImages[i] != null)
+				{
+					ArticleImages[i] = picIO.ResizeImage(ArticleImages[i], new Size(800, 9999));
+				}
+			}
+			ArticlePicturePreview.Image = ArticleImages[ArticlePicNum];
 		}
 	}
 }
