@@ -5,6 +5,8 @@ using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Collections.Specialized;
 using QYArticleUpdater.Main;
+using System.IO;
+
 namespace QYArticleUpdater
 {
 	public partial class PictureIO : Form
@@ -15,10 +17,10 @@ namespace QYArticleUpdater
 		{
 			InitializeComponent();
 			this.PictureInput.AllowDrop = true;
-			// ע��DragEnter�¼�
+			// 注册DragEnter事件
 			this.PictureInput.DragEnter += new DragEventHandler(PictureInput_DragEnter);
 
-			// ע��DragDrop�¼�
+			// 注册DragDrop事件
 			this.PictureInput.DragDrop += new DragEventHandler(PictureInput_DragDrop);
 			if (File.Exists("C:\\settings.txt") || File.Exists("settings.txt"))
 			{
@@ -56,9 +58,9 @@ namespace QYArticleUpdater
 				{
 					if (file.EndsWith(".jpg") || file.EndsWith(".jpeg") || file.EndsWith(".png") || file.EndsWith(".bmp") || file.EndsWith(".webp"))
 					{
-						// ����PictureBox��ͼ��
+						// 将PictureBox的图像设置为拖放的图像
 						this.PictureInput.Image = Image.FromFile(file);
-						break; // ֻ������һ��ͼ���ļ�
+						break; // 只处理第一个图像文件
 					}
 				}
 			}
@@ -76,21 +78,21 @@ namespace QYArticleUpdater
 		{
 			if (e.Data.GetDataPresent(DataFormats.FileDrop))
 			{
-				// ����Ϸŵ������Ƿ�����ļ�
+				// 检查拖放的内容是否包含文件
 				string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-				// ����Ƿ���ͼ���ļ�
+				// 检查是否为图像文件
 				foreach (var file in files)
 				{
 					if (file.EndsWith(".jpg") || file.EndsWith(".jpeg") || file.EndsWith(".png") || file.EndsWith(".bmp") || file.EndsWith(".webp"))
 					{
-						e.Effect = DragDropEffects.Copy; // ��������
+						e.Effect = DragDropEffects.Copy; // 允许复制
 						return;
 					}
 				}
 			}
 			PictureInput_BackgroundImageChanged();
-			e.Effect = DragDropEffects.None; // �������κ��Ϸ�
+			e.Effect = DragDropEffects.None; // 不允许任何合法
 			if (e.Data.GetDataPresent(DataFormats.Text))
 			{
 				e.Effect = DragDropEffects.All;
@@ -110,35 +112,35 @@ namespace QYArticleUpdater
 
 		private void Generator_Click(object sender, EventArgs e)
 		{
-			// ȷ����ͼ��Ҫ����
+			// 确保有图像要处理
 			if (PictureInput.Image == null) return;
 
-			// ���ñ�����������ָ��JPEG����
+			// 设置编码器参数以指定JPEG质量
 			ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
 			EncoderParameters encoderParams = new EncoderParameters(1);
 
 			int quality = Convert.ToInt32(QualitySelector.SelectedItem.ToString().TrimEnd('%'));
 			encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, quality);
-			// ����һ���µ�Bitmap�������ڱ����������С���ʽ��ͼ��
+			// 创建一个新的Bitmap对象用于保存调整大小和格式的图像
 			Bitmap bitmap = new Bitmap(PictureInput.Image);
-			// �����ڴ���
+			// 创建内存流
 			using (MemoryStream ms = new MemoryStream())
 			{
-				// ��bitmap����ΪJPEG��ʽ���ڴ����У�ͬʱӦ��JPEG��������
+				// 将bitmap保存为JPEG格式到内存流中，同时应用JPEG压缩参数
 				bitmap.Save(ms, jpgEncoder, encoderParams);
 
-				// ���ڴ��������µ�Image����
+				// 从内存流创建新的Image对象
 				Image img = Image.FromStream(ms);
 				img = ResizeImage(img, new Size(Convert.ToInt32(resolutionX.Text), Convert.ToInt32(resolutionY.Text)));
 
 				//img = ResizeImage(img, new Size(Convert.ToInt32(resolutionX.Text), Convert.ToInt32(resolutionY.Text)));
 				img.Save(OutputPath.Text + "\\" + Suffix1.Text + "-" + DateTime.Now.ToString("MM-dd-hh-mm-ss") + ".jpg", ImageFormat.Jpeg);
 
-				// �ͷ���Դ
+				// 释放资源
 				img.Dispose();
 			}
 
-			// �ͷ�bitmap��Դ
+			// 释放bitmap资源
 			bitmap.Dispose();
 			//if(!int.TryParse(resolutionY.Text,))resolutionY.Text = "1920";
 
@@ -158,44 +160,44 @@ namespace QYArticleUpdater
 		}
 		private void CopyGenerator_Click(object sender, EventArgs e)
 		{
-			// ȷ����ͼ��Ҫ����
+			// 确保有图像要处理
 			if (PictureInput.Image == null) return;
 
-			// ���ñ�����������ָ��JPEG����
+			// 设置编码器参数以指定JPEG质量
 			ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
 			EncoderParameters encoderParams = new EncoderParameters(1);
 
 			int quality = Convert.ToInt32(QualitySelector.SelectedItem.ToString().TrimEnd('%'));
 			encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, quality);
-			// ����һ���µ�Bitmap�������ڱ����������С���ʽ��ͼ��
+			// 创建一个新的Bitmap对象用于保存调整大小和格式的图像
 			Bitmap bitmap = new Bitmap(PictureInput.Image);
-			// �����ڴ���
+			// 创建内存流
 			using (MemoryStream ms = new MemoryStream())
 			{
-				// ��bitmap����ΪJPEG��ʽ���ڴ����У�ͬʱӦ��JPEG��������
+				// 将bitmap保存为JPEG格式到内存流中，同时应用JPEG压缩参数
 				bitmap.Save(ms, jpgEncoder, encoderParams);
 
-				// ���ڴ��������µ�Image����
+				// 从内存流创建新的Image对象
 				Image img = Image.FromStream(ms);
 				img = ResizeImage(img, new Size(Convert.ToInt32(resolutionX.Text), Convert.ToInt32(resolutionY.Text)));
 				img.Save(OutputPath.Text + "\\" + Suffix1.Text + ".jpg", ImageFormat.Jpeg);
 				//img = Image.FromFile($"{OutputPath.Text}\\{Suffix1.Text}.jpg");
 
-				// �����ļ�·������
+				// 创建文件路径集合
 				StringCollection filePaths = new StringCollection();
 				string tempFilePath = OutputPath.Text + "\\" + Suffix1.Text + ".jpg";
 				filePaths.Add(tempFilePath);
 
-				// ���ļ�·�����Ϸ��������
+				// 将文件路径复制到剪贴板
 				Clipboard.SetFileDropList(filePaths);
-				// ��ͼ���Ƶ�������
+				// 将图像复制到剪贴板
 				//Clipboard.SetImage(img);
 
-				// �ͷ���Դ
+				// 释放资源
 				img.Dispose();
 			}
 
-			// �ͷ�bitmap��Դ
+			// 释放bitmap资源
 			bitmap.Dispose();
 
 			//Clipboard.SetImage(img);
@@ -237,29 +239,29 @@ namespace QYArticleUpdater
 			else return;
 			if (PictureInput.Image != null)
 			{
-				// ��ȡPictureBox�Ĵ�С
+				// 获取PictureBox的大小
 				Size picBoxSize = PictureInput.Size;
 
-				// ��ȡPictureBox��ͼ���ʵ�ʴ�С
+				// 获取PictureBox中图像的实际大小
 				Size imgSize = PictureInput.Image.Size;
 
-				// ����ͼ�����ű���
+				// 计算图像的缩放比例
 				double scaleWidth = (double)picBoxSize.Width / imgSize.Width;
 				double scaleHeight = (double)picBoxSize.Height / imgSize.Height;
 
-				// ����PictureBox��SizeModeȷ��ʹ���ĸ����ű���
+				// 根据PictureBox的SizeMode确定使用哪个缩放比例
 				double scale = Math.Max(scaleWidth, scaleHeight);
 				if (PictureInput.SizeMode == PictureBoxSizeMode.AutoSize || PictureInput.SizeMode == PictureBoxSizeMode.Normal)
 				{
-					scale = 1.0; // ���ͼƬû�б����ţ������ű���Ϊ1
+					scale = 1.0; // 如果图片没有被缩放，则缩放比例为1
 				}
 
-				// ��ȡ���λ�������PictureBox������
+				// 获取鼠标位置相对于PictureBox的坐标
 				clickPoint = new Point(e.X, e.Y);
-				// ���ǵ�PictureBox���ܵĹ���ƫ��
+				// 考虑到PictureBox可能的滚动偏移
 				Point scrollOffset = PictureInput.Parent is Panel panel ? new Point(panel.AutoScrollPosition.X, panel.AutoScrollPosition.Y) : Point.Empty;
 
-				// ����������ԭͼ�е�����
+				// 转换坐标到原图中的坐标
 				Point originalPoint = new Point((int)((clickPoint.X - scrollOffset.X) / scale), (int)((clickPoint.Y - scrollOffset.Y) / scale));
 
 				groupBox3.Enabled = true;
@@ -267,7 +269,7 @@ namespace QYArticleUpdater
 				if (originalPoint.Y < 0) originalPoint.Y = 0;
 				if (originalPoint.X > picBoxSize.Width) originalPoint.X = picBoxSize.Width;
 				if (originalPoint.Y > picBoxSize.Height) originalPoint.Y = picBoxSize.Height;
-				ClickedPoint.Text = $"��ѡ������: {originalPoint.X}, {originalPoint.Y}";
+				ClickedPoint.Text = $"已选择坐标: {originalPoint.X}, {originalPoint.Y}";
 			}
 		}
 		private Bitmap CropImage(Image source, Rectangle rect)
@@ -289,14 +291,14 @@ namespace QYArticleUpdater
 		{
 			Image originalImage = PictureInput.Image;
 
-			// �ָ��
+			// 分割点
 			int splitX = clickPoint.X;
 			int splitY = clickPoint.Y;
 			if (splitX < 0) splitX = 0;
 			if (splitY < 0) splitY = 0;
 			if (splitX > originalImage.Width) splitX = originalImage.Width;
 			if (splitY > originalImage.Height) splitY = originalImage.Height;
-			// �ָ�ͼ��
+			// 分割图像
 			Bitmap topLeft = CropImage(originalImage, new Rectangle(0, 0, splitX, splitY));
 			Bitmap topRight = CropImage(originalImage, new Rectangle(splitX, 0, originalImage.Width - splitX, splitY));
 			Bitmap bottomLeft = CropImage(originalImage, new Rectangle(0, splitY, splitX, originalImage.Height - splitY));
@@ -307,39 +309,39 @@ namespace QYArticleUpdater
 			Bitmap Left = CropImage(originalImage, new Rectangle(0, 0, splitX, originalImage.Height));
 			Bitmap Right = CropImage(originalImage, new Rectangle(splitX, 0, originalImage.Width - splitX, originalImage.Height));
 
-			if (sender.ToString().Contains("����"))
+			if (sender.ToString().Contains("左上"))
 			{
 				PictureInput.Image = topLeft;
 			}
-			else if (sender.ToString().Contains("����"))
+			else if (sender.ToString().Contains("左下"))
 			{
 				PictureInput.Image = bottomLeft;
 			}
-			else if (sender.ToString().Contains("����"))
+			else if (sender.ToString().Contains("右上"))
 			{
 				PictureInput.Image = topRight;
 			}
-			else if (sender.ToString().Contains("����"))
+			else if (sender.ToString().Contains("右下"))
 			{
 				PictureInput.Image = bottomRight;
 			}
-			else if (sender.ToString().Contains("��"))
+			else if (sender.ToString().Contains("上"))
 			{
 				PictureInput.Image = Top;
 			}
-			else if (sender.ToString().Contains("��"))
+			else if (sender.ToString().Contains("下"))
 			{
 				PictureInput.Image = Bottom;
 			}
-			else if (sender.ToString().Contains("��"))
+			else if (sender.ToString().Contains("左"))
 			{
 				PictureInput.Image = Left;
 			}
-			else if (sender.ToString().Contains("��"))
+			else if (sender.ToString().Contains("右"))
 			{
 				PictureInput.Image = Right;
 			}
-			ClickedPoint.Text = $"��ѡ������: ";
+			ClickedPoint.Text = $"已选择坐标: ";
 			groupBox3.Enabled = false;
 			img = PictureInput.Image;
 			PictureInput_BackgroundImageChanged();
@@ -366,36 +368,36 @@ namespace QYArticleUpdater
 		}
 		private void TryPasteFromClipboard()
 		{
-			// �������ı���ʽ��ȡ����������
+			// 尝试以文本格式获取剪贴板内容
 			var clipboardText = Clipboard.GetText();
 			if (!string.IsNullOrEmpty(clipboardText) && clipboardText.StartsWith("data:image"))
 			{
 				try
 				{
-					// ������URIת��ΪImage����
+					// 将数据URI转换为Image对象
 					PictureInput.Image = ConvertDataUriToImage(clipboardText);
 				}
 				catch (Exception ex)
 				{
-					MessageBox.Show("�޷�������URI����ͼƬ: " + ex.Message);
+					MessageBox.Show("无法从数据URI创建图片: " + ex.Message);
 				}
 			}
 		}
 
 		private Image ConvertDataUriToImage(string dataUri)
 		{
-			// �Ƴ�"data:image/png;base64,"ǰ׺
+			// 移除"data:image/png;base64,"前缀
 			string base64String = dataUri.Split(',')[1];
 			byte[] imageBytes = Convert.FromBase64String(base64String);
 
-			// ʹ���ڴ�������ͼ��
+			// 使用内存流创建图像
 			using (MemoryStream ms = new MemoryStream(imageBytes))
 			{
 				return Image.FromStream(ms);
 			}
 		}
 		/// <summary>
-		/// ճ��ͼ��
+		/// 粘贴图像
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
@@ -440,33 +442,32 @@ namespace QYArticleUpdater
 			PicFileSize.Text = Convert.ToString(PicLengthCalculate(PictureInput.Image) / 1024) + 'K';
 		}
 		private long PicLengthCalculate(Image img)
-
 		{
-			// ȷ����ͼ��Ҫ����
+			// 确保有图像要处理
 			if (PictureInput.Image == null) return 0;
 
-			// ���ñ�����������ָ��JPEG����
+			// 设置编码器参数以指定JPEG质量
 			ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
 			EncoderParameters encoderParams = new EncoderParameters(1);
 
 			int quality = Convert.ToInt32(Convert.ToString(QualitySelector.SelectedItem).TrimEnd('%'));
 			encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, quality);
 			img = ResizeImage(img, new Size(Convert.ToInt32(resolutionX.Text), Convert.ToInt32(resolutionY.Text)));
-			// ����һ���µ�Bitmap�������ڱ����������С���ʽ��ͼ��
+			// 创建一个新的Bitmap对象用于保存调整大小和格式的图像
 			Bitmap bitmap = new Bitmap(img);
-			// �����ڴ���
+			// 创建内存流
 			MemoryStream ms = new MemoryStream();
 
-			// ��bitmap����ΪJPEG��ʽ���ڴ����У�ͬʱӦ��JPEG��������
+			// 将bitmap保存为JPEG格式到内存流中，同时应用JPEG压缩参数
 			bitmap.Save(ms, jpgEncoder, encoderParams);
-			long len = ms.Length;//��ȡͼƬ��С
+			long len = ms.Length;//获取图片大小
 
 
-			// �ͷ���Դ
+			// 释放资源
 			img.Dispose();
 
 
-			// �ͷ�bitmap��Դ
+			// 释放bitmap资源
 			bitmap.Dispose();
 			return len;
 		}
@@ -480,12 +481,12 @@ namespace QYArticleUpdater
 		{
 			if (PictureInput.Image != null)
 			{
-				// ��PictureBox�е�ͼ������񻯴���
+				// 对PictureBox中的图像进行锐化处理
 				Bitmap originalImage = new Bitmap(PictureInput.Image);
-				Bitmap sharpenedImage = ImageSharpener.Sharpen(originalImage, 1.5f); // ����factorֵ�Կ����񻯳̶�
+				Bitmap sharpenedImage = ImageSharpener.Sharpen(originalImage, 1.5f); // 调整factor值可控制锐化程度
 
-				// ���������ͼ�����û�PictureBox
-				PictureInput.Image?.Dispose(); // �ͷ�ԭʼͼ����Դ
+				// 将锐化后的图像显示给用户PictureBox
+				PictureInput.Image?.Dispose(); // 释放原始图像资源
 				PictureInput.Image = sharpenedImage;
 			}
 			PictureInput_BackgroundImageChanged();
@@ -503,14 +504,14 @@ namespace QYArticleUpdater
 		}
 		#region iFrames
 		/// <summary>
-		/// ת��iframe
+		/// 转换iframe
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		private void convertIframeButton_Click(object sender, EventArgs e)
 		{
-			if (inputsharediframebox.Text.StartsWith("<iframe"))//ʾ�����룺<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=113809956084766&bvid=BV1XacweXEC2&cid=27816494236&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
-			{//Ԥ�������<p style = "text-align: center;"><iframe id="vplay" frameborder="0"  src="//player.bilibili.com/player.html?isOutside=true&aid=113804218271116&bvid=BV1yscHeFEMt&cid=27798341903&p=1&autoplay=0" allowFullScreen="true"></iframe></p>
+			if (inputsharediframebox.Text.StartsWith("<iframe"))//示例代码：<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=113809956084766&bvid=BV1XacweXEC2&cid=27816494236&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+			{//预览代码：<p style = "text-align: center;"><iframe id="vplay" frameborder="0"  src="//player.bilibili.com/player.html?isOutside=true&aid=113804218271116&bvid=BV1yscHeFEMt&cid=27798341903&p=1&autoplay=0" allowFullScreen="true"></iframe></p>
 				outputsharediframebox.Text = "<iframe id=\"vplay\" frameborder=\"0\"  "
 					+ inputsharediframebox.Text.Replace("<iframe", string.Empty).Replace("\" scrolling=\"no\" border=\"0\" frameborder=\"no\" framespacing=\"0\" allowfullscreen=\"true\"></iframe>", string.Empty)
 					+ "&autoplay=0\" allowFullScreen=\"true\"></iframe>";
@@ -537,4 +538,3 @@ namespace QYArticleUpdater
 		#endregion
 	}
 }
-

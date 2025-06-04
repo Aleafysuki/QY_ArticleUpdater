@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using QYArticleUpdater.Main;
+using System.Net.Http.Headers;
 using static QYArticleUpdater.Main.Caesar;
 namespace QYArticleUpdater.FileRW
 
@@ -13,7 +14,7 @@ namespace QYArticleUpdater.FileRW
 		public async Task Uploader(string filePath)
 		{
 			// URL of the API endpoint
-			string url = CaesarDecode(2, @"frrnq8--_ng,ogcwms,amk-_bkgl-E_kc-ecrSnjm_bq");
+			string url = Decrypt(2, @"frrnq8--_ng,ogcwms,amk-_bkgl-E_kc-ecrSnjm_bq");
 
 			// Path to the image file you want to upload
 			//string filePath = @"C:\path\to\your\image.jpg";
@@ -27,10 +28,10 @@ namespace QYArticleUpdater.FileRW
 					multiPartContent.Headers.TryAddWithoutValidation("accept", "*/*");
 					multiPartContent.Headers.TryAddWithoutValidation("accept-language", "zh-CN,zh;q=0.9");
 					multiPartContent.Headers.TryAddWithoutValidation("cache-control", "no-cache");
-					multiPartContent.Headers.TryAddWithoutValidation("origin", CaesarDecode(9, @"_kkg1&&cXfc`l---%h`\pfl%Zfd"));
+					multiPartContent.Headers.TryAddWithoutValidation("origin", Decrypt(9, @"_kkg1&&cXfc`l---%h`\pfl%Zfd"));
 					multiPartContent.Headers.TryAddWithoutValidation("pragma", "no-cache");
 					multiPartContent.Headers.TryAddWithoutValidation("priority", "u=1, i");
-					multiPartContent.Headers.TryAddWithoutValidation("referer", CaesarDecode(9, @"_kkg1&&cXfc`l---%h`\pfl%Zfd"));
+					multiPartContent.Headers.TryAddWithoutValidation("referer", Decrypt(9, @"_kkg1&&cXfc`l---%h`\pfl%Zfd"));
 					multiPartContent.Headers.TryAddWithoutValidation("sec-ch-ua", "\"Not/A)Brand\";v=\"8\", \"Chromium\";v=\"126\", \"Google Chrome\";v=\"126\"");
 					multiPartContent.Headers.TryAddWithoutValidation("sec-ch-ua-mobile", "?0");
 					multiPartContent.Headers.TryAddWithoutValidation("sec-ch-ua-platform", "\"Windows\"");
@@ -78,7 +79,7 @@ namespace QYArticleUpdater.FileRW
 
 						try
 						{
-							HttpResponseMessage response = await client.PostAsync(CaesarDecode(9, @"_kkgj1&&Xg`%h`\pfl%Zfd&X[d`e&>Xd\&^\kLgcfX[j"), content);
+							HttpResponseMessage response = await client.PostAsync(Caesar.Decrypt(9, @"_kkgj1&&Xg`%h`\pfl%Zfd&X[d`e&>Xd\&^\kLgcfX[j"), content);
 
 							if (response.IsSuccessStatusCode)
 							{

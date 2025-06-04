@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Json;
-using System.Text;
+﻿using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -56,7 +55,7 @@ namespace QYArticleUpdater.Main
 				Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
 				WriteIndented = true
 			});
-			var content = new StringContent(jsonRequest.ToLower(),Encoding.UTF8, "application/json");
+			var content = new StringContent(jsonRequest.ToLower(), Encoding.UTF8, "application/json");
 			messagerequest.Content = content;
 			var response = await client.SendAsync(messagerequest);
 			response.EnsureSuccessStatusCode();
@@ -171,44 +170,44 @@ namespace QYArticleUpdater.Main
 
 	}
 
-		public class ChatResponse
-		{
-			public string id { get; set; } // Note: lowercase 'i'
-			public string @object { get; set; } // Note: '@' symbol to escape reserved keyword
-			public int created { get; set; } // Note: lowercase 'c'
-			public string model { get; set; } // Note: lowercase 'm'
-			public Choice[] choices { get; set; } // Note: lowercase 'c'
-			public Usage usage { get; set; } // Note: lowercase 'u'
-			public string system_fingerprint { get; set; } // Note: lowercase and underscore
-		}
+	public class ChatResponse
+	{
+		public string id { get; set; } // Note: lowercase 'i'
+		public string @object { get; set; } // Note: '@' symbol to escape reserved keyword
+		public int created { get; set; } // Note: lowercase 'c'
+		public string model { get; set; } // Note: lowercase 'm'
+		public Choice[] choices { get; set; } // Note: lowercase 'c'
+		public Usage usage { get; set; } // Note: lowercase 'u'
+		public string system_fingerprint { get; set; } // Note: lowercase and underscore
+	}
 
-		public class Choice
-		{
-			public int index { get; set; } // Note: lowercase 'i'
-			public Message message { get; set; } // Note: lowercase 'm'
-			public object logprobs { get; set; } // Note: lowercase 'l'
-			public string finish_reason { get; set; } // Note: lowercase and underscore
-		}
+	public class Choice
+	{
+		public int index { get; set; } // Note: lowercase 'i'
+		public Message message { get; set; } // Note: lowercase 'm'
+		public object logprobs { get; set; } // Note: lowercase 'l'
+		public string finish_reason { get; set; } // Note: lowercase and underscore
+	}
 
-		public class Message
-		{
-			public string role { get; set; } // Note: lowercase 'r'
-			public string content { get; set; } // Note: lowercase 'c'
-		}
+	public class Message
+	{
+		public string role { get; set; } // Note: lowercase 'r'
+		public string content { get; set; } // Note: lowercase 'c'
+	}
 
-		public class Usage
-		{
-			public int prompt_tokens { get; set; } // Note: lowercase and underscores
-			public int completion_tokens { get; set; } // Note: lowercase and underscores
-			public int total_tokens { get; set; } // Note: lowercase and underscores
-			public PromptTokensDetails prompt_tokens_details { get; set; } // Note: lowercase and underscores
-			public int prompt_cache_hit_tokens { get; set; } // Note: lowercase and underscores
-			public int prompt_cache_miss_tokens { get; set; } // Note: lowercase and underscores
-		}
+	public class Usage
+	{
+		public int prompt_tokens { get; set; } // Note: lowercase and underscores
+		public int completion_tokens { get; set; } // Note: lowercase and underscores
+		public int total_tokens { get; set; } // Note: lowercase and underscores
+		public PromptTokensDetails prompt_tokens_details { get; set; } // Note: lowercase and underscores
+		public int prompt_cache_hit_tokens { get; set; } // Note: lowercase and underscores
+		public int prompt_cache_miss_tokens { get; set; } // Note: lowercase and underscores
+	}
 
-		public class PromptTokensDetails
-		{
-			public int cached_tokens { get; set; } // Note: lowercase and underscores
-		}
-	
+	public class PromptTokensDetails
+	{
+		public int cached_tokens { get; set; } // Note: lowercase and underscores
+	}
+
 }

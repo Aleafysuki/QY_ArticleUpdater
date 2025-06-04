@@ -30,6 +30,7 @@
 		{
 			components = new System.ComponentModel.Container();
 			ArticleBox = new GroupBox();
+			ArticleGameName = new LabeledInput();
 			groupBox1 = new GroupBox();
 			PictureQuickSizeButton = new Button();
 			ArticlePicturePreview = new PictureBox();
@@ -40,6 +41,8 @@
 			PictureEditButton = new Button();
 			PosterGroupBox = new GroupBox();
 			PosterPictureView = new PictureBox();
+			AdjustPosterSize = new Button();
+			SelectDefaultPosterButton = new Button();
 			SelectPosterButton = new Button();
 			ArticleSource = new LabeledInput();
 			ArticleAuthor = new LabeledInput();
@@ -94,6 +97,8 @@
 			ArticleUploadNow = new RadioButton();
 			ArticleUploadLater = new RadioButton();
 			ArticleAsDraft = new CheckBox();
+			LoginButton = new Button();
+			ArticleTimePicker = new DateTimePicker();
 			ArticleBox.SuspendLayout();
 			groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)ArticlePicturePreview).BeginInit();
@@ -111,6 +116,7 @@
 			// ArticleBox
 			// 
 			ArticleBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			ArticleBox.Controls.Add(ArticleGameName);
 			ArticleBox.Controls.Add(groupBox1);
 			ArticleBox.Controls.Add(PosterGroupBox);
 			ArticleBox.Controls.Add(ArticleSource);
@@ -126,6 +132,18 @@
 			ArticleBox.TabIndex = 0;
 			ArticleBox.TabStop = false;
 			ArticleBox.Text = "文章预览";
+			// 
+			// ArticleGameName
+			// 
+			ArticleGameName.Font = new Font("微软雅黑 Consolas", 10.6930695F);
+			ArticleGameName.HideText = '\0';
+			ArticleGameName.InputText = "";
+			ArticleGameName.LabelText = "游戏名";
+			ArticleGameName.Location = new Point(455, 24);
+			ArticleGameName.Name = "ArticleGameName";
+			ArticleGameName.Size = new Size(194, 24);
+			ArticleGameName.SplitVal = 68;
+			ArticleGameName.TabIndex = 9;
 			// 
 			// groupBox1
 			// 
@@ -220,6 +238,8 @@
 			// PosterGroupBox
 			// 
 			PosterGroupBox.Controls.Add(PosterPictureView);
+			PosterGroupBox.Controls.Add(AdjustPosterSize);
+			PosterGroupBox.Controls.Add(SelectDefaultPosterButton);
 			PosterGroupBox.Controls.Add(SelectPosterButton);
 			PosterGroupBox.Font = new Font("微软雅黑 Consolas", 9.267326F, FontStyle.Regular, GraphicsUnit.Point, 134);
 			PosterGroupBox.Location = new Point(6, 80);
@@ -235,18 +255,41 @@
 			PosterPictureView.Location = new Point(6, 24);
 			PosterPictureView.Name = "PosterPictureView";
 			PosterPictureView.Size = new Size(154, 89);
+			PosterPictureView.SizeMode = PictureBoxSizeMode.AutoSize;
 			PosterPictureView.TabIndex = 8;
 			PosterPictureView.TabStop = false;
+			// 
+			// AdjustPosterSize
+			// 
+			AdjustPosterSize.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			AdjustPosterSize.Font = new Font("微软雅黑 Consolas", 9.267326F, FontStyle.Regular, GraphicsUnit.Point, 134);
+			AdjustPosterSize.Location = new Point(163, 85);
+			AdjustPosterSize.Name = "AdjustPosterSize";
+			AdjustPosterSize.Size = new Size(96, 28);
+			AdjustPosterSize.TabIndex = 7;
+			AdjustPosterSize.Text = "裁切变换封面";
+			AdjustPosterSize.UseVisualStyleBackColor = true;
+			// 
+			// SelectDefaultPosterButton
+			// 
+			SelectDefaultPosterButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			SelectDefaultPosterButton.Font = new Font("微软雅黑 Consolas", 9.267326F, FontStyle.Regular, GraphicsUnit.Point, 134);
+			SelectDefaultPosterButton.Location = new Point(163, 54);
+			SelectDefaultPosterButton.Name = "SelectDefaultPosterButton";
+			SelectDefaultPosterButton.Size = new Size(96, 28);
+			SelectDefaultPosterButton.TabIndex = 7;
+			SelectDefaultPosterButton.Text = "使用默认图片";
+			SelectDefaultPosterButton.UseVisualStyleBackColor = true;
 			// 
 			// SelectPosterButton
 			// 
 			SelectPosterButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			SelectPosterButton.Font = new Font("微软雅黑 Consolas", 9.267326F, FontStyle.Regular, GraphicsUnit.Point, 134);
-			SelectPosterButton.Location = new Point(163, 85);
+			SelectPosterButton.Location = new Point(163, 24);
 			SelectPosterButton.Name = "SelectPosterButton";
 			SelectPosterButton.Size = new Size(96, 28);
 			SelectPosterButton.TabIndex = 7;
-			SelectPosterButton.Text = "封面图片编辑";
+			SelectPosterButton.Text = "从文件选择";
 			SelectPosterButton.UseVisualStyleBackColor = true;
 			SelectPosterButton.Click += SelectPosterButton_Click;
 			// 
@@ -294,8 +337,8 @@
 			ArticleTags.LabelText = "标签Tag";
 			ArticleTags.Location = new Point(5, 53);
 			ArticleTags.Name = "ArticleTags";
-			ArticleTags.Size = new Size(345, 21);
-			ArticleTags.SplitVal = 96;
+			ArticleTags.Size = new Size(234, 21);
+			ArticleTags.SplitVal = 65;
 			ArticleTags.TabIndex = 3;
 			// 
 			// TextBoldButton
@@ -318,8 +361,8 @@
 			ArticleTitle.LabelText = "标题";
 			ArticleTitle.Location = new Point(5, 26);
 			ArticleTitle.Name = "ArticleTitle";
-			ArticleTitle.Size = new Size(645, 21);
-			ArticleTitle.SplitVal = 96;
+			ArticleTitle.Size = new Size(444, 21);
+			ArticleTitle.SplitVal = 66;
 			ArticleTitle.TabIndex = 1;
 			// 
 			// Article
@@ -524,7 +567,7 @@
 			UserSignTextBox.Location = new Point(3, 26);
 			UserSignTextBox.Multiline = true;
 			UserSignTextBox.Name = "UserSignTextBox";
-			UserSignTextBox.Size = new Size(262, 115);
+			UserSignTextBox.Size = new Size(262, 112);
 			UserSignTextBox.TabIndex = 3;
 			// 
 			// label2
@@ -751,12 +794,30 @@
 			// ArticleAsDraft
 			// 
 			ArticleAsDraft.AutoSize = true;
-			ArticleAsDraft.Location = new Point(503, 624);
+			ArticleAsDraft.Location = new Point(503, 607);
 			ArticleAsDraft.Name = "ArticleAsDraft";
 			ArticleAsDraft.Size = new Size(63, 26);
 			ArticleAsDraft.TabIndex = 7;
 			ArticleAsDraft.Text = "草稿";
 			ArticleAsDraft.UseVisualStyleBackColor = true;
+			// 
+			// LoginButton
+			// 
+			LoginButton.Location = new Point(259, 609);
+			LoginButton.Name = "LoginButton";
+			LoginButton.Size = new Size(203, 29);
+			LoginButton.TabIndex = 8;
+			LoginButton.Text = "(上传不正常时用)登录";
+			LoginButton.UseVisualStyleBackColor = true;
+			LoginButton.Click += LoginButton_Click;
+			// 
+			// ArticleTimePicker
+			// 
+			ArticleTimePicker.Format = DateTimePickerFormat.Custom;
+			ArticleTimePicker.Location = new Point(220, 640);
+			ArticleTimePicker.Name = "ArticleTimePicker";
+			ArticleTimePicker.Size = new Size(346, 30);
+			ArticleTimePicker.TabIndex = 9;
 			// 
 			// Form1
 			// 
@@ -764,6 +825,8 @@
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = Color.Linen;
 			ClientSize = new Size(1584, 760);
+			Controls.Add(ArticleTimePicker);
+			Controls.Add(LoginButton);
 			Controls.Add(ArticleAsDraft);
 			Controls.Add(ArticleUploadLater);
 			Controls.Add(ArticleUploadNow);
@@ -785,6 +848,7 @@
 			groupBox1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)ArticlePicturePreview).EndInit();
 			PosterGroupBox.ResumeLayout(false);
+			PosterGroupBox.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)PosterPictureView).EndInit();
 			AIBox.ResumeLayout(false);
 			PromptListMenu.ResumeLayout(false);
@@ -867,5 +931,10 @@
 		private ListBox ArticleGenerateLog;
 		private Button PictureQuickSizeButton;
 		private CheckBox SkipAI;
+		private LabeledInput ArticleGameName;
+		private Button LoginButton;
+		private Button AdjustPosterSize;
+		private Button SelectDefaultPosterButton;
+		private DateTimePicker ArticleTimePicker;
 	}
 }

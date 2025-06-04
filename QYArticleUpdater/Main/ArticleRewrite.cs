@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net.Http.Headers;
 using static QYArticleUpdater.Main.Caesar;
 
 namespace QYArticleUpdater.Main
 {
+	/// <summary>
+	/// 重写并上传文章
+	/// </summary>
 	internal class ArticleRewrite
 	{
 		private HttpClient client = new HttpClient();
@@ -22,7 +19,7 @@ namespace QYArticleUpdater.Main
 					content.Add(new StringContent(item.Value), item.Key);
 				}
 
-				HttpResponseMessage response = await client.PostAsync(CaesarDecode(14, @"Zffb,!!Sb[ c[Wkag Ua_!SV_[`!3df[U^W!Sdf[U^W7V[f"), content);
+				HttpResponseMessage response = await client.PostAsync(Decrypt(14, @"Zffb,!!Sb[ c[Wkag Ua_!SV_[`!3df[U^W!Sdf[U^W7V[f"), content);
 				response.EnsureSuccessStatusCode();
 				return await response.Content.ReadAsStringAsync();
 			}
@@ -49,7 +46,7 @@ namespace QYArticleUpdater.Main
 					content.Add(streamContent, "zh_poster", Path.GetFileName(posterFilePath));
 				}
 
-				HttpResponseMessage response = await client.PostAsync(CaesarDecode(14, @"Zffb,!!Sb[ c[Wkag Ua_!SV_[`!3df[U^W!Sdf[U^W7V[f"), content);
+				HttpResponseMessage response = await client.PostAsync(Decrypt(14, @"Zffb,!!Sb[ c[Wkag Ua_!SV_[`!3df[U^W!Sdf[U^W7V[f"), content);
 				response.EnsureSuccessStatusCode();
 				return await response.Content.ReadAsStringAsync();
 			}
