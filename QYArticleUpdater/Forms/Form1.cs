@@ -1,12 +1,12 @@
 ﻿using QYArticleUpdater.FileRW;
 using QYArticleUpdater.Main;
+using System.Drawing.Imaging;
 using System.IO.Compression;
 using System.Net.Http.Headers;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using static System.Net.Mime.MediaTypeNames;
+using static QYArticleUpdater.Main.DSCommunication;
+using System.Text.Json;
 
 namespace QYArticleUpdater
 {
@@ -23,6 +23,32 @@ namespace QYArticleUpdater
 			ArticleUploadNow.Checked = true;
 		}
 
+		const string jsonGenerator = @"
+请生成一个包含下面信息的JSON，具体要求如下：
+- 文章标题：字符串类型
+- 文章关联游戏名称：字符串类型
+- 文章的标签：字符串类型
+
+说明：1.文章标题应为20到24个汉字长度，不能包含除空格外的标点符号，每个空格算作0.5个汉字。
+2.文章关联游戏名应为字符串类型，表示这篇文章关联的游戏名称。
+3.文章标签应为字符串类型，多个标签之间用半角逗号分隔。
+4.请确保JSON格式正确，使用双引号包裹键和值。
+5.请不要包含任何额外的文本或说明，只返回JSON格式的内容。
+6.标题撰写提示：可以考虑受众会怎样搜索文章，例如介绍角色技能的文章，读者一般会搜索“有什么技能”“技能怎么升级”一类的词汇；介绍游戏更新时间的文章，读者一般会搜索“什么时候更新”。
+7.标题参考：***有什么技能 ***技能介绍、***什么时候公测 ***公测时间、***怎么过 **关卡打法攻略流程
+8.标签撰写提示：标签以可以联系到更多相关文章为佳，并且每个标签中间用半角逗号分隔，'游戏攻略'、'游戏资讯'这两个标签不要写（因为这两个标签是系统默认的），其他标签可以写，例如'角色技能'、'游戏公测'、'游戏更新'等。
+
+
+请严格按照以下格式返回结果：
+
+```json
+{
+ ""title"": ""示例文章标题"",
+ ""game"": ""示例关联游戏名"",
+ ""tag"": ""示例标签1,示例标签2,示例标签3""
+}
+
+";
 		private void PromptSettingButton_Click(object sender, EventArgs e)
 		{
 			PromptEditWindow promptEdit = new PromptEditWindow();
@@ -57,7 +83,7 @@ namespace QYArticleUpdater
 			{
 				return;
 			}
-			Font? CurrentFont = Article.SelectionFont;
+			System.Drawing.Font? CurrentFont = Article.SelectionFont;
 			FontStyle BoldSelection;
 			if (CurrentFont != null)
 			{
@@ -69,7 +95,7 @@ namespace QYArticleUpdater
 				{
 					BoldSelection = CurrentFont.Style | FontStyle.Bold;
 				}
-				Article.SelectionFont = new Font(CurrentFont, BoldSelection);
+				Article.SelectionFont = new System.Drawing.Font(CurrentFont, BoldSelection);
 			}
 			else return;
 		}
@@ -90,7 +116,7 @@ namespace QYArticleUpdater
 			TextAlignCenter();
 		}
 		#endregion
-		Image[] ArticleImages;
+		System.Drawing.Image[] ArticleImages;
 		string[] ArticleImagesStr;
 		private async void PageProcessButton_Click(object sender, EventArgs e)
 		{
@@ -106,7 +132,7 @@ namespace QYArticleUpdater
 			 * 8.文章上传完成
 			 */
 			WebpageAccess webpage = new WebpageAccess();
-			WebCommunication communication = new WebCommunication();
+			//WebCommunication communication = new WebCommunication();
 			if (PageLink.InputText.Length < 5)
 			{
 				MessageBox.Show("尚未检测到有效的链接！", "无指定链接", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -149,16 +175,78 @@ namespace QYArticleUpdater
 
 			//Article.Text = webpage.ExtractTextByClass(webpage.GetWebpageContent(PageLink.InputText), PageDivClassList.SelectedItem.ToString());
 			//Thread ProgressBarRefresh = new Thread(new ThreadStart(ProgressBarRefreshTask));
-			if (SkipAI.Checked)
-			{
-				Article.Text = OriginalArticle;
-				return;
-			}
+
 			try
 			{
+				if (SkipAI.Checked)
+				{
+					Log("INFO", "已开启跳过AI生成【调试】，直接使用原文");
+					Article.Text = OriginalArticle;
+					return;
+				}
 				Log("INFO", "已向AI发送请求，正在等待回复");
-				Article.Text = await communication.DS_Message(OriginalArticle);
+				Connect();
+				string prompt = @"【游戏攻略】将提供给你的内容撰写成一份游戏攻略文章。
+设想你是游戏资讯/攻略网站的编辑，需要对内容进行重新伪原创，并且不要出现AI特征（例如使用AI常用词等）。
+
+只提供文章即可，文章的引用、说明等内容请不要输出。
+标题先不要输出，之后需要你在下一个回复中，单独生成标题。
+
+##注意事项:
+- 撰写时，剔除原网站的相关信息。
+- 需要注意标点符号的运用，不能丢失标点。
+- 需要写得尽可能详细，但不要自行点评以及升华，不要自己添油加醋，不要出现例如“这个技能可以xxx”“xxx对于xxx至关重要”“值得注意的是”等内容。
+- 正文尽量不要分条罗列。但例如介绍角色技能等内容，可以用小标题+一个完整段落的形式进行撰写。小标题只写成正文加粗，不要使用Head标签（撰写的时候不要使用两个井号来提升小标题权重）。
+- 若使用小标题，则小标题和对应段落之间不要使用一个分行或者两个分行，而是应该使用段落标记（不要用换行符<br>，而是和其他段落一样使用段落符号<p>）。
+- 不到万不得已尽量少用小标题。因为你的取标题能力很容易让读者看出来这篇文章非常水。
+- 剔除掉不需要的部分，例如要求撰写介绍角色技能的文章，如果提供的材料中包括了角色装备的介绍，也请不要在文中出现这些和主题无关的内容。
+- 若原文出现多个文章写作方向（例如提到某角色的攻略介绍了角色定位、技能、配队等多方面的内容），默认选择第一个。
+- 不要添加过多敬语，不要总是动不动就您您您的，应该拉近读者距离。
+- 攻略全文应该包含关于页面所述游戏名的关键词。关键词密度应大于2%。
+- 攻略开头和结尾段落应该针对所涉及到的游戏进行SEO。
+- 除部分有需要的内容需要写成表格之外，不应该出现任何其他格式（例如标题、有序/无序列表、分隔线）。但是允许加粗、斜体的格式。
+- 每句话的结尾必须是句号/问号/叹号等中文全角标点符号，不可以是点号(.)。每段的结尾都应该使用段落标记而不是换行符。小标题也使用段落标记而不是换行符。
+- 撰写时查找互联网相关资料，尽量将“玩家”一词替换为游戏官方给玩家安排的称呼（例如《原神》中的玩家被称呼为“旅行者”），如果查不到或者拿不准主意就称呼玩家即可。
+- 攻略需要有SEO友好的开头和结尾段落。如果原文没有则自行添加。开头段落应该自成一段，不能裹挟本来应该在正文的一部分内容。
+- 如果有明确的回答，在正文中用一段话的空间来明确回答文章所提到的问题（例如将某某游戏什么时候公测的文章，可以在正文中使用单独的一段写“某某游戏公测时间为x月x日”）。
+- 如果游戏为《地下城与勇士：起源》or《地下城与勇士手游》，则将其替换为《DNF手游》（即所有的“地下城与勇士”替换为“DNF”）。
+- 若文中出现洛克王国世界的字样，《洛克王国世界》是游戏名。
+- 全文中的游戏名都可以不加书名号。
+- 不要出现向其他任何平台导流的内容，例如“使用TapTap/豌豆荚/好游快爆预约”这样的字样一律不可以出现。
+
+##对初始语句的要求示例（可以进行适度的修改和美化）:
+xxx（游戏）的xxx（问题）？很多玩家都不清楚/想要了解/在询问小编xx（问题但是换一种问法），切游小编整理了一下关于xxx（文章主题）的一些资料，其实xxx（一句补充内容），下面我们一起来看一下xxx（问题）。
+（举例：原神甘雨用什么圣遗物最好？很多旅行者在培养甘雨的时候不清楚该给她配备什么圣遗物比较好，切游小编整理了一下原神甘雨的圣遗物配装相关资料，甘雨的圣遗物还是尽量靠扩大输出为目标，下面我们来看看详细的原神甘雨圣遗物配装相关攻略。）
+
+##开头段落长度要求：尽量不要多于150字。
+
+##中间段落长度要求：
+每段尽量不要超过200字或150token，正文部分的内容需要根据内容需求进行合理分段，但不是分条罗列。以2~5段为佳，不能写成一整段！
+
+##结尾语句要求示例（可以进行适度的润色、修改和美化）:
+{用一句话总结回应主题}，{\""以上就是\""+主题内容}了/啦。如果这篇攻略对你有帮助，还请点个收藏关注一下切游网，各位读者的支持就是我们持续更新的最大动力。
+（举例：原神甘雨的圣遗物配装以攻、冰、双爆为主要配装目标，这样可以最大化她的输出。以上就是原神甘雨的圣遗物配装攻略啦，如果这篇甘雨的圣遗物搭配攻略对你有帮助的话，还请点个收藏关注一下切游网，各位读者的支持就是我们持续更新的最大动力。";
+				SendSystemPrompt(prompt);
+				Article.Text = Regex.Replace(await SendUserMessageAsync(OriginalArticle), @"\*\*(.*?)\*\*", "<b>$1</b>");
+
 				Log("OK", "已获取AI返回信息");
+				string ArticleInfo = "placeholder" + await SendUserMessageAsync(jsonGenerator);//生成一个固定格式的回复，目前考虑json
+
+				Log("INFO", "正在生成文章标题、标签以及关联游戏");
+				try
+				{
+					ArticleInfo = ArticleInfo.Split(new string[] { "```json" }, StringSplitOptions.RemoveEmptyEntries)[1].Split('}')[0] + '}';//
+					ArticleTitle.InputText = JsonSerializer.Deserialize<ArticleInfoData>(ArticleInfo).title;
+					ArticleGameName.InputText = JsonSerializer.Deserialize<ArticleInfoData>(ArticleInfo).game;
+					ArticleTags.InputText = JsonSerializer.Deserialize<ArticleInfoData>(ArticleInfo).tag;
+				}
+				catch (Exception exp)
+				{
+					Log("ERROR", string.Format($"从AI API获得的返回数据有误:{0}", exp));
+					return;
+				}
+
+				Log("OK", "已获取文章标题等内容");
 			}
 			catch (Exception exp)
 			{
@@ -166,10 +254,16 @@ namespace QYArticleUpdater
 			}
 
 		}
-
+		private class ArticleInfoData
+		{
+			public string title { get; set; }
+			public string game { get; set; }
+			public string tag { get; set; }
+		}
 		public void Log(string type, string info)
 		{
 			ArticleGenerateLog.Items.Add(string.Format($"[{type}] {info}"));
+
 			ArticleGenerateLog.SelectedIndex = ArticleGenerateLog.Items.Count - 1;
 		}
 		private void PlatformVisibleButton_Click(object sender, EventArgs e)
@@ -235,7 +329,7 @@ namespace QYArticleUpdater
 					Description = Description,
 					ImagePath = posterFilePath,
 					AdminId = Convert.ToInt32(_uid),
-					ZhDetail = Article.Text,
+					ZhDetail = TransformText(Article.Text),
 					Sign = UserSignTextBox.Text
 				});
 				/*
@@ -265,10 +359,11 @@ namespace QYArticleUpdater
 				};
 				*/
 
-
-				// = await uploader.UploadArticle(formData, posterFilePath);
-				MessageBox.Show(Regex.Unescape(response));
-
+				if (Regex.Unescape(response).Contains("20"))
+				{
+					Disconnect();
+					MessageBox.Show(Regex.Unescape(response));
+				}
 			}
 			catch (Exception ex)
 			{
@@ -345,6 +440,10 @@ namespace QYArticleUpdater
 		}
 		public async Task<string> UploadArticleAsync(ArticleData article)
 		{
+			if (Convert.ToInt32(_uid) < 20)
+			{
+				throw new Exception("UID异常，请点击登录按钮进行用户登录获取UID");
+			}
 			using (var client = new HttpClient())
 			{
 
@@ -383,14 +482,22 @@ namespace QYArticleUpdater
 						var imageContent = new ByteArrayContent(File.ReadAllBytes(article.ImagePath));
 						imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
 						content.Add(imageContent, "zh_poster", Path.GetFileName(article.ImagePath));
+
 					}
 
 					// 添加其他字段
 					AddTextContent(content, "description", article.Description);
 					AddTextContent(content, "isVisit", "2");
 					AddTextContent(content, "isReply", "2");
-					AddTextContent(content, "isPublish", "2");
-
+					if (ArticleUploadNow.Checked)
+					{
+						AddTextContent(content, "isPublish", "2");
+					}
+					else if (ArticleUploadLater.Checked)
+					{
+						AddTextContent(content, "isPublish", "1");
+						AddTextContent(content, "publish_time", ArticleTimePicker.Text);
+					}
 					//isPublish这里的说明
 					//若isPublish=1，则为存草稿，若为2则是直接发出来，下面的publish_time可以不保留
 					//此时需要额外的内容：publish_time，具体内容格式为：
@@ -458,18 +565,33 @@ namespace QYArticleUpdater
 		}
 		static string TransformText(string input)
 		{
-			// 使用正则表达式匹配所有的 <p> 标签，并确保它们不是包含 <img> 的标签
-			string pattern = @"<p>(?!.*?<img\b).*?</p>";
-			string replacement = "<p style=\"text-align: start;\">$&</p>";
+			// 根据换行符拆分文本
+			var lines = input.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+			var htmlBuilder = new System.Text.StringBuilder();
 
-			// 替换所有匹配的 <p> 标签
-			string html = Regex.Replace(input, pattern, replacement, RegexOptions.Singleline);
-			// 去除空段落 <p><br></p> 或 <p>&nbsp;</p>
-			html = Regex.Replace(html, @"<p>\s*(<br\s*/?>)?\s*</p>", "", RegexOptions.IgnoreCase);
+			foreach (var line in lines)
+			{
+				var trimmedLine = line.Trim();
+				if (string.IsNullOrWhiteSpace(trimmedLine))
+				{
+					// 跳过空白行
+					continue;
+				}
 
-			// 去除多个连续换行 <br><br><br>
-			string result = Regex.Replace(html, @"(<br\s*/?>\s*){2,}", "<br>", RegexOptions.IgnoreCase);
-			return result;
+				// 检查是否是仅包含图片的段落
+				if (Regex.IsMatch(trimmedLine, @"^\s*<img [^>]+>\s*$"))
+				{
+					// 如果是图片，则直接添加到htmlBuilder中
+					htmlBuilder.AppendLine(trimmedLine);
+				}
+				else
+				{
+					// 否则将其包裹在<p>标签中
+					htmlBuilder.AppendLine($"<p>{trimmedLine}</p>");
+				}
+			}
+
+			return htmlBuilder.ToString().Replace("</p></p>", "</p>").Replace("<p><p", "<p");
 		}
 		private void SelectPosterButton_Click(object sender, EventArgs e)
 		{
@@ -479,7 +601,7 @@ namespace QYArticleUpdater
 				if (openFileDialog.ShowDialog() == DialogResult.OK)
 				{
 					posterFilePath = openFileDialog.FileName;
-					PosterPictureView.Image = Image.FromFile(posterFilePath);
+					PosterPictureView.Image = System.Drawing.Image.FromFile(posterFilePath);
 					//lblSelectedFile.Text = $"Selected File: {Path.GetFileName(posterFilePath)}";
 				}
 			}
@@ -501,6 +623,7 @@ namespace QYArticleUpdater
 			if (ArticlePicturePreview.Image == null) return;
 			ArticleImagesStr = new string[ArticleImages.Length];
 			var picReturnStr = ArticleImagesStr[ArticlePicNum];
+			if (ArticlePicNum >= ArticleImages.Length) return;
 			if (ArticleImagesStr[ArticlePicNum] == null)
 			{
 				picReturnStr = await uploader.PictureUpload(ArticlePicturePreview.Image);
@@ -601,7 +724,7 @@ namespace QYArticleUpdater
 		private void ArticlePicturePreview_Paint(object sender, PaintEventArgs e)
 		{
 			if (ArticlePicturePreview.Image == null) return;
-			PictureFileNameLabel.Text = string.Format($"共有{ArticleImages.Length - 1}张图片 - 当前{ArticlePicNum + 1} / {ArticleImages.Length + 1}\n分辨率{ArticlePicturePreview.Image.Width}*{ArticlePicturePreview.Image.Height}");
+			PictureFileNameLabel.Text = string.Format($"共有{ArticleImages.Length}张图片 - 当前{ArticlePicNum + 1} / {ArticleImages.Length}\n分辨率{ArticlePicturePreview.Image.Width}*{ArticlePicturePreview.Image.Height}");
 			if (ArticleImagesStr != null)
 			{
 				PictureFileNameLabel.Text += $"\nlink={ArticleImagesStr[ArticlePicNum]}";
@@ -629,6 +752,61 @@ namespace QYArticleUpdater
 		private async void LoginButton_Click(object sender, EventArgs e)
 		{
 			await LoginAsync("qy2025001", "CX!Lfk8jR&3JU%KP");
+		}
+
+		private void AdjustPosterSize_Click(object sender, EventArgs e)
+		{
+			//打开图片编辑窗口PictureIO
+
+			if (PosterPictureView.Image == null) return;
+			var posterImage = PictureIO.AdjustToSelectedResolution(PosterPictureView.Image, new int[] { 1000, 600 });
+			PosterPictureView.Image = posterImage;
+			if (!Directory.Exists(@"D:\Poster\")) Directory.CreateDirectory(@"D:\Poster\");
+			posterImage.Save(@"D:\Poster\temp_poster.jpg", ImageFormat.Jpeg);
+			posterFilePath = @"D:\Poster\temp_poster.jpg";
+
+		}
+
+		private void SelectDefaultPosterButton_Click(object sender, EventArgs e)
+		{
+			PosterPictureView.Image = ArticlePicturePreview.Image;
+		}
+
+		private void ArticleUploadLater_CheckedChanged(object sender, EventArgs e)
+		{
+
+			ArticleTimePicker.Enabled = ArticleUploadLater.Checked;
+
+		}
+
+		private void ArticleGenerateLog_DoubleClick(object sender, EventArgs e)
+		{
+			if (ArticleGenerateLog.Items.Count <= 0) return;
+			MessageBox.Show(ArticleGenerateLog.SelectedItem.ToString(), "详细信息", MessageBoxButtons.OK);
+		}
+
+		private void PreviewImageCopy_Click(object sender, EventArgs e)
+		{
+			Clipboard.SetImage(ArticlePicturePreview.Image);
+		}
+
+		private void TimeRandomizeButton_Click(object sender, EventArgs e)
+		{
+			ArticleTimePicker.Text = RandomTimeGenerator();
+		}
+		private string RandomTimeGenerator()
+		{
+			// 生成一个随机的时间字符串，格式为"yyyy-MM-dd HH:mm:ss"
+			Random random = new Random();
+			int year = ArticleTimePicker.Value.Year; // 年份
+			int month = ArticleTimePicker.Value.Month; // 月份
+			int day = ArticleTimePicker.Value.Day; // 日期
+			int hour = random.Next(8, 20); // 随机小时
+			int minute = random.Next(0, 60); // 随机分钟
+			int second = random.Next(0, 60); // 随机秒数
+			// 返回格式化的时间字符串
+			return string.Format("{0:0000}-{1:00}-{2:00} {3:00}:{4:00}:{5:00}", year, month, day, hour, minute, second);
+			//return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 		}
 	}
 }

@@ -16,12 +16,12 @@ namespace QYArticleUpdater
 		public PictureIO()
 		{
 			InitializeComponent();
-			this.PictureInput.AllowDrop = true;
+			PictureInput.AllowDrop = true;
 			// 注册DragEnter事件
-			this.PictureInput.DragEnter += new DragEventHandler(PictureInput_DragEnter);
+			PictureInput.DragEnter += new DragEventHandler(PictureInput_DragEnter);
 
 			// 注册DragDrop事件
-			this.PictureInput.DragDrop += new DragEventHandler(PictureInput_DragDrop);
+			PictureInput.DragDrop += new DragEventHandler(PictureInput_DragDrop);
 			if (File.Exists("C:\\settings.txt") || File.Exists("settings.txt"))
 			{
 				files = (File.Exists("C:\\settings.txt") ? File.ReadAllLines("C:\\settings.txt") : File.ReadAllLines("settings.txt"));
@@ -45,6 +45,66 @@ namespace QYArticleUpdater
 				}
 				groupBox3.Enabled = false;
 				QualitySelector.SelectedIndex = 0;
+			}
+		}
+		/// <summary>
+		/// 将图片按比例缩放到合适的尺寸并输出
+		/// </summary>
+		/// <param name="img">需要处理的图片</param>
+		/// <param name="resolution">所需的分辨率，resolution[0]为横向分辨率，resolution[1]为纵向分辨率</param>
+		/// <returns>调整后的图片</returns>
+		public static Image AdjustToSelectedResolution(Image img, int[] resolution)
+		{
+			if (img == null)
+			{
+				throw new ArgumentNullException(nameof(img), "图片引用错误");
+			}
+
+			if (resolution == null || resolution.Length < 2)
+			{
+				throw new ArgumentException("分辨率必须只包含两个参数且必须为整数，resolution[0]为横向分辨率，resolution[1]为纵向分辨率", nameof(resolution));
+			}
+
+			int maxWidth = resolution[0];
+			int maxHeight = resolution[1];
+
+			// 计算原始图片的宽高比
+			float aspectRatio = (float)img.Width / img.Height;
+			float targetAspectRatio = (float)maxWidth / maxHeight;
+
+			// 创建一个新的Bitmap对象来保存调整后的图片
+			Bitmap resizedImage = new Bitmap(maxWidth, maxHeight);
+
+			using (Graphics graphics = Graphics.FromImage(resizedImage))
+			{
+				graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+				graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+				graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+				graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+
+				if (aspectRatio >= targetAspectRatio)
+				{
+					// 如果图像更“宽”，则按高度缩放
+					int newHeight = maxHeight;
+					int newWidth = (int)(newHeight * aspectRatio);
+					Rectangle sourceRect = new Rectangle(0, 0, img.Width, img.Height);
+					Rectangle destRect = new Rectangle(-(newWidth - maxWidth) / 2, 0, newWidth, newHeight);
+					graphics.DrawImage(img, destRect, sourceRect, GraphicsUnit.Pixel);
+				}
+				else
+				{
+					// 如果图像更“高”或正好，则按宽度缩放
+					int newWidth = maxWidth;
+					int newHeight = (int)(newWidth / aspectRatio);
+					Rectangle sourceRect = new Rectangle(0, 0, img.Width, img.Height);
+					Rectangle destRect = new Rectangle(0, -(newHeight - maxHeight) / 2, newWidth, newHeight);
+					graphics.DrawImage(img, destRect, sourceRect, GraphicsUnit.Pixel);
+				}
+
+				// 裁剪到目标尺寸
+				Rectangle cropRect = new Rectangle(0, 0, maxWidth, maxHeight);
+				Bitmap finalImage = resizedImage.Clone(cropRect, resizedImage.PixelFormat);
+				return finalImage;
 			}
 		}
 		#region pictures

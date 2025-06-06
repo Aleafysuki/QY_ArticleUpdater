@@ -34,6 +34,9 @@
 			groupBox1 = new GroupBox();
 			PictureQuickSizeButton = new Button();
 			ArticlePicturePreview = new PictureBox();
+			PicPreviewMenu = new ContextMenuStrip(components);
+			PreviewImageCopy = new ToolStripMenuItem();
+			TransformedPreviewImageCopy = new ToolStripMenuItem();
 			NextPicButton = new Button();
 			PrevPicButton = new Button();
 			PictureFileNameLabel = new Label();
@@ -99,9 +102,11 @@
 			ArticleAsDraft = new CheckBox();
 			LoginButton = new Button();
 			ArticleTimePicker = new DateTimePicker();
+			TimeRandomizeButton = new Button();
 			ArticleBox.SuspendLayout();
 			groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)ArticlePicturePreview).BeginInit();
+			PicPreviewMenu.SuspendLayout();
 			PosterGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)PosterPictureView).BeginInit();
 			AIBox.SuspendLayout();
@@ -175,6 +180,7 @@
 			// ArticlePicturePreview
 			// 
 			ArticlePicturePreview.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			ArticlePicturePreview.ContextMenuStrip = PicPreviewMenu;
 			ArticlePicturePreview.Location = new Point(6, 18);
 			ArticlePicturePreview.Name = "ArticlePicturePreview";
 			ArticlePicturePreview.Size = new Size(191, 89);
@@ -182,6 +188,27 @@
 			ArticlePicturePreview.TabIndex = 10;
 			ArticlePicturePreview.TabStop = false;
 			ArticlePicturePreview.Paint += ArticlePicturePreview_Paint;
+			// 
+			// PicPreviewMenu
+			// 
+			PicPreviewMenu.Font = new Font("Microsoft YaHei UI", 13F);
+			PicPreviewMenu.ImageScalingSize = new Size(17, 17);
+			PicPreviewMenu.Items.AddRange(new ToolStripItem[] { PreviewImageCopy, TransformedPreviewImageCopy });
+			PicPreviewMenu.Name = "PicPreviewMenu";
+			PicPreviewMenu.Size = new Size(256, 64);
+			// 
+			// PreviewImageCopy
+			// 
+			PreviewImageCopy.Name = "PreviewImageCopy";
+			PreviewImageCopy.Size = new Size(255, 30);
+			PreviewImageCopy.Text = "复制图像（原图）";
+			PreviewImageCopy.Click += PreviewImageCopy_Click;
+			// 
+			// TransformedPreviewImageCopy
+			// 
+			TransformedPreviewImageCopy.Name = "TransformedPreviewImageCopy";
+			TransformedPreviewImageCopy.Size = new Size(255, 30);
+			TransformedPreviewImageCopy.Text = "复制图像（变换后）";
 			// 
 			// NextPicButton
 			// 
@@ -209,7 +236,7 @@
 			// 
 			PictureFileNameLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			PictureFileNameLabel.AutoSize = true;
-			PictureFileNameLabel.Location = new Point(203, 29);
+			PictureFileNameLabel.Location = new Point(203, 18);
 			PictureFileNameLabel.Name = "PictureFileNameLabel";
 			PictureFileNameLabel.Size = new Size(50, 17);
 			PictureFileNameLabel.TabIndex = 8;
@@ -254,8 +281,8 @@
 			PosterPictureView.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			PosterPictureView.Location = new Point(6, 24);
 			PosterPictureView.Name = "PosterPictureView";
-			PosterPictureView.Size = new Size(154, 89);
-			PosterPictureView.SizeMode = PictureBoxSizeMode.AutoSize;
+			PosterPictureView.Size = new Size(150, 90);
+			PosterPictureView.SizeMode = PictureBoxSizeMode.Zoom;
 			PosterPictureView.TabIndex = 8;
 			PosterPictureView.TabStop = false;
 			// 
@@ -269,6 +296,7 @@
 			AdjustPosterSize.TabIndex = 7;
 			AdjustPosterSize.Text = "裁切变换封面";
 			AdjustPosterSize.UseVisualStyleBackColor = true;
+			AdjustPosterSize.Click += AdjustPosterSize_Click;
 			// 
 			// SelectDefaultPosterButton
 			// 
@@ -280,6 +308,7 @@
 			SelectDefaultPosterButton.TabIndex = 7;
 			SelectDefaultPosterButton.Text = "使用默认图片";
 			SelectDefaultPosterButton.UseVisualStyleBackColor = true;
+			SelectDefaultPosterButton.Click += SelectDefaultPosterButton_Click;
 			// 
 			// SelectPosterButton
 			// 
@@ -695,6 +724,7 @@
 			ArticleGenerateLog.Name = "ArticleGenerateLog";
 			ArticleGenerateLog.Size = new Size(619, 123);
 			ArticleGenerateLog.TabIndex = 8;
+			ArticleGenerateLog.DoubleClick += ArticleGenerateLog_DoubleClick;
 			// 
 			// label1
 			// 
@@ -790,6 +820,7 @@
 			ArticleUploadLater.TabStop = true;
 			ArticleUploadLater.Text = "定时";
 			ArticleUploadLater.UseVisualStyleBackColor = true;
+			ArticleUploadLater.CheckedChanged += ArticleUploadLater_CheckedChanged;
 			// 
 			// ArticleAsDraft
 			// 
@@ -813,11 +844,23 @@
 			// 
 			// ArticleTimePicker
 			// 
+			ArticleTimePicker.Font = new Font("微软雅黑 Consolas", 10.6930695F, FontStyle.Regular, GraphicsUnit.Point, 134);
 			ArticleTimePicker.Format = DateTimePickerFormat.Custom;
-			ArticleTimePicker.Location = new Point(220, 640);
+			ArticleTimePicker.Location = new Point(343, 640);
 			ArticleTimePicker.Name = "ArticleTimePicker";
-			ArticleTimePicker.Size = new Size(346, 30);
+			ArticleTimePicker.Size = new Size(223, 27);
 			ArticleTimePicker.TabIndex = 9;
+			// 
+			// TimeRandomizeButton
+			// 
+			TimeRandomizeButton.Font = new Font("微软雅黑 Consolas", 9.267326F, FontStyle.Regular, GraphicsUnit.Point, 134);
+			TimeRandomizeButton.Location = new Point(259, 640);
+			TimeRandomizeButton.Name = "TimeRandomizeButton";
+			TimeRandomizeButton.Size = new Size(79, 27);
+			TimeRandomizeButton.TabIndex = 10;
+			TimeRandomizeButton.Text = "随机时间";
+			TimeRandomizeButton.UseVisualStyleBackColor = true;
+			TimeRandomizeButton.Click += TimeRandomizeButton_Click;
 			// 
 			// Form1
 			// 
@@ -825,6 +868,7 @@
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = Color.Linen;
 			ClientSize = new Size(1584, 760);
+			Controls.Add(TimeRandomizeButton);
 			Controls.Add(ArticleTimePicker);
 			Controls.Add(LoginButton);
 			Controls.Add(ArticleAsDraft);
@@ -847,8 +891,8 @@
 			groupBox1.ResumeLayout(false);
 			groupBox1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)ArticlePicturePreview).EndInit();
+			PicPreviewMenu.ResumeLayout(false);
 			PosterGroupBox.ResumeLayout(false);
-			PosterGroupBox.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)PosterPictureView).EndInit();
 			AIBox.ResumeLayout(false);
 			PromptListMenu.ResumeLayout(false);
@@ -936,5 +980,9 @@
 		private Button AdjustPosterSize;
 		private Button SelectDefaultPosterButton;
 		private DateTimePicker ArticleTimePicker;
+		private ContextMenuStrip PicPreviewMenu;
+		private ToolStripMenuItem PreviewImageCopy;
+		private ToolStripMenuItem TransformedPreviewImageCopy;
+		private Button TimeRandomizeButton;
 	}
 }

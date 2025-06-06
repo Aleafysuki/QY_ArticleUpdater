@@ -27,7 +27,7 @@ namespace QYArticleUpdater.Main
 			char[] decryptedChars = new char[encryptedText.Length];
 			for (int i = 0; i < encryptedText.Length; i++)
 			{
-				decryptedChars[i] = ShiftCharacter(encryptedText[i], -shift);
+				decryptedChars[i] = ShiftCharacter(encryptedText[i], shift);
 			}
 			return new string(decryptedChars);
 		}
@@ -40,14 +40,11 @@ namespace QYArticleUpdater.Main
 		/// <returns>移动后的新字符。</returns>
 		private static char ShiftCharacter(char character, int shift)
 		{
-			if (!char.IsLetter(character))
-			{
-				return character;
-			}
-
-			char offset = char.IsUpper(character) ? 'A' : 'a';
-			int shiftedPosition = ((character + shift - offset) % 26 + 26) % 26 + offset;
-			return (char)shiftedPosition;
+			// 确保字符在ASCII范围内
+			int asciiValue = character + shift;
+			// 使用模运算来保持在0-127之间
+			asciiValue = (asciiValue % 128 + 128) % 128;
+			return (char)asciiValue;
 		}
 	}
 }

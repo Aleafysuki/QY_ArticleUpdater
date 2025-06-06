@@ -16,7 +16,7 @@ namespace QYArticleUpdater.Main
 
 
 		DataRoot? QSystemData;
-		string DataJsonURL = Caesar.Decrypt(10, @"^jjfi0%%Wf_$g_[oek$Yec%WZc_d%7hj_Yb[%Whj_Yb[Iehj5k_Z3/*ioij[c3'hekj[3(");
+		string DataJsonURL = Decrypt(10, @"^jjfi0%%Wf_$g_[oek$Yec%WZc_d%7hj_Yb[%Whj_Yb[Iehj5k_Z3/*ioij[c3'hekj[3(");
 		//"https://api.qieyou.com/admin/Article/articleSort?uid=94&system=1&route=%2Farticle%2FallList%2F";
 		public async Task SystemDataGetAsync()
 		{
