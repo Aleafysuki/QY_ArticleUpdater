@@ -31,7 +31,7 @@ namespace QYArticleUpdater.Main
 				_client = new HttpClient();
 				_client.DefaultRequestHeaders.Add("Authorization", ApiKey);
 				_client.DefaultRequestHeaders.Add("Accept", "application/json");
-				_client.Timeout = TimeSpan.FromSeconds(30);
+				_client.Timeout = TimeSpan.FromSeconds(120);
 
 				// 初始化新的消息历史
 				_messageHistory = new List<ChatMessage>();
@@ -96,7 +96,7 @@ namespace QYArticleUpdater.Main
 			// 发送请求
 			var jsonContent = JsonSerializer.Serialize(request);
 			var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
+			//_client.Timeout = TimeSpan.FromSeconds(300);
 			var response = await _client.PostAsync(ApiUrl, httpContent);
 			response.EnsureSuccessStatusCode();
 

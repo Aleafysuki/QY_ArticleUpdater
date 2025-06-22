@@ -30,6 +30,7 @@
 		{
 			components = new System.ComponentModel.Container();
 			ArticleBox = new GroupBox();
+			label3 = new Label();
 			ArticleGameName = new LabeledInput();
 			groupBox1 = new GroupBox();
 			PictureQuickSizeButton = new Button();
@@ -44,6 +45,8 @@
 			PictureEditButton = new Button();
 			PosterGroupBox = new GroupBox();
 			PosterPictureView = new PictureBox();
+			PosterPicturePaste = new ContextMenuStrip(components);
+			粘贴图像ToolStripMenuItem = new ToolStripMenuItem();
 			AdjustPosterSize = new Button();
 			SelectDefaultPosterButton = new Button();
 			SelectPosterButton = new Button();
@@ -54,6 +57,7 @@
 			TextBoldButton = new Button();
 			ArticleTitle = new LabeledInput();
 			Article = new RichTextBox();
+			AritcleMenu = new ContextMenuStrip(components);
 			AIBox = new GroupBox();
 			PromptPreviewList = new ListBox();
 			PromptListMenu = new ContextMenuStrip(components);
@@ -87,6 +91,7 @@
 			toolStripMenuItem3 = new ToolStripMenuItem();
 			UploadButton = new Button();
 			PageProcessBox = new GroupBox();
+			FullAutoMode = new CheckBox();
 			SkipAI = new CheckBox();
 			ArticleGenerateLog = new ListBox();
 			label1 = new Label();
@@ -109,6 +114,7 @@
 			PicPreviewMenu.SuspendLayout();
 			PosterGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)PosterPictureView).BeginInit();
+			PosterPicturePaste.SuspendLayout();
 			AIBox.SuspendLayout();
 			PromptListMenu.SuspendLayout();
 			CaptureBox.SuspendLayout();
@@ -121,6 +127,7 @@
 			// ArticleBox
 			// 
 			ArticleBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			ArticleBox.Controls.Add(label3);
 			ArticleBox.Controls.Add(ArticleGameName);
 			ArticleBox.Controls.Add(groupBox1);
 			ArticleBox.Controls.Add(PosterGroupBox);
@@ -131,6 +138,7 @@
 			ArticleBox.Controls.Add(TextBoldButton);
 			ArticleBox.Controls.Add(ArticleTitle);
 			ArticleBox.Controls.Add(Article);
+			ArticleBox.Font = new Font("微软雅黑 Consolas", 10.6930695F, FontStyle.Regular, GraphicsUnit.Point, 134);
 			ArticleBox.Location = new Point(914, 37);
 			ArticleBox.Name = "ArticleBox";
 			ArticleBox.Size = new Size(657, 711);
@@ -138,16 +146,26 @@
 			ArticleBox.TabStop = false;
 			ArticleBox.Text = "文章预览";
 			// 
+			// label3
+			// 
+			label3.BackColor = Color.Transparent;
+			label3.Font = new Font("宋体", 4.990099F, FontStyle.Regular, GraphicsUnit.Point, 134);
+			label3.Location = new Point(78, 17);
+			label3.Name = "label3";
+			label3.Size = new Size(427, 17);
+			label3.TabIndex = 0;
+			label3.Text = "0              5              10              15              20              25\r\n····+····|····+····|····+····|····+····|····+····|";
+			// 
 			// ArticleGameName
 			// 
-			ArticleGameName.Font = new Font("微软雅黑 Consolas", 10.6930695F);
+			ArticleGameName.Font = new Font("微软雅黑 Consolas", 9.267326F, FontStyle.Regular, GraphicsUnit.Point, 134);
 			ArticleGameName.HideText = '\0';
 			ArticleGameName.InputText = "";
 			ArticleGameName.LabelText = "游戏名";
-			ArticleGameName.Location = new Point(455, 24);
+			ArticleGameName.Location = new Point(461, 30);
 			ArticleGameName.Name = "ArticleGameName";
-			ArticleGameName.Size = new Size(194, 24);
-			ArticleGameName.SplitVal = 68;
+			ArticleGameName.Size = new Size(188, 25);
+			ArticleGameName.SplitVal = 52;
 			ArticleGameName.TabIndex = 9;
 			// 
 			// groupBox1
@@ -195,20 +213,21 @@
 			PicPreviewMenu.ImageScalingSize = new Size(17, 17);
 			PicPreviewMenu.Items.AddRange(new ToolStripItem[] { PreviewImageCopy, TransformedPreviewImageCopy });
 			PicPreviewMenu.Name = "PicPreviewMenu";
-			PicPreviewMenu.Size = new Size(256, 64);
+			PicPreviewMenu.Size = new Size(243, 60);
 			// 
 			// PreviewImageCopy
 			// 
 			PreviewImageCopy.Name = "PreviewImageCopy";
-			PreviewImageCopy.Size = new Size(255, 30);
+			PreviewImageCopy.Size = new Size(242, 28);
 			PreviewImageCopy.Text = "复制图像（原图）";
 			PreviewImageCopy.Click += PreviewImageCopy_Click;
 			// 
 			// TransformedPreviewImageCopy
 			// 
 			TransformedPreviewImageCopy.Name = "TransformedPreviewImageCopy";
-			TransformedPreviewImageCopy.Size = new Size(255, 30);
+			TransformedPreviewImageCopy.Size = new Size(242, 28);
 			TransformedPreviewImageCopy.Text = "复制图像（变换后）";
+			TransformedPreviewImageCopy.Click += TransformedPreviewImageCopy_Click;
 			// 
 			// NextPicButton
 			// 
@@ -235,10 +254,9 @@
 			// PictureFileNameLabel
 			// 
 			PictureFileNameLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			PictureFileNameLabel.AutoSize = true;
 			PictureFileNameLabel.Location = new Point(203, 18);
 			PictureFileNameLabel.Name = "PictureFileNameLabel";
-			PictureFileNameLabel.Size = new Size(50, 17);
+			PictureFileNameLabel.Size = new Size(163, 64);
 			PictureFileNameLabel.TabIndex = 8;
 			PictureFileNameLabel.Text = "label2";
 			// 
@@ -279,12 +297,28 @@
 			// PosterPictureView
 			// 
 			PosterPictureView.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			PosterPictureView.ContextMenuStrip = PosterPicturePaste;
 			PosterPictureView.Location = new Point(6, 24);
 			PosterPictureView.Name = "PosterPictureView";
 			PosterPictureView.Size = new Size(150, 90);
 			PosterPictureView.SizeMode = PictureBoxSizeMode.Zoom;
 			PosterPictureView.TabIndex = 8;
 			PosterPictureView.TabStop = false;
+			// 
+			// PosterPicturePaste
+			// 
+			PosterPicturePaste.Font = new Font("Microsoft YaHei UI", 13F);
+			PosterPicturePaste.ImageScalingSize = new Size(17, 17);
+			PosterPicturePaste.Items.AddRange(new ToolStripItem[] { 粘贴图像ToolStripMenuItem });
+			PosterPicturePaste.Name = "PosterPicturePaste";
+			PosterPicturePaste.Size = new Size(153, 32);
+			// 
+			// 粘贴图像ToolStripMenuItem
+			// 
+			粘贴图像ToolStripMenuItem.Name = "粘贴图像ToolStripMenuItem";
+			粘贴图像ToolStripMenuItem.Size = new Size(152, 28);
+			粘贴图像ToolStripMenuItem.Text = "粘贴图像";
+			粘贴图像ToolStripMenuItem.Click += 粘贴图像ToolStripMenuItem_Click;
 			// 
 			// AdjustPosterSize
 			// 
@@ -328,7 +362,7 @@
 			ArticleSource.HideText = '\0';
 			ArticleSource.InputText = "网络";
 			ArticleSource.LabelText = "来源";
-			ArticleSource.Location = new Point(361, 53);
+			ArticleSource.Location = new Point(361, 56);
 			ArticleSource.Name = "ArticleSource";
 			ArticleSource.Size = new Size(141, 24);
 			ArticleSource.SplitVal = 50;
@@ -340,7 +374,7 @@
 			ArticleAuthor.HideText = '\0';
 			ArticleAuthor.InputText = "Kave";
 			ArticleAuthor.LabelText = "作者";
-			ArticleAuthor.Location = new Point(508, 53);
+			ArticleAuthor.Location = new Point(508, 56);
 			ArticleAuthor.Name = "ArticleAuthor";
 			ArticleAuthor.Size = new Size(141, 24);
 			ArticleAuthor.SplitVal = 50;
@@ -360,14 +394,14 @@
 			// 
 			// ArticleTags
 			// 
-			ArticleTags.Font = new Font("微软雅黑 Consolas", 10.6930695F);
+			ArticleTags.Font = new Font("微软雅黑 Consolas", 9.267326F);
 			ArticleTags.HideText = '\0';
 			ArticleTags.InputText = "";
 			ArticleTags.LabelText = "标签Tag";
-			ArticleTags.Location = new Point(5, 53);
+			ArticleTags.Location = new Point(4, 56);
 			ArticleTags.Name = "ArticleTags";
-			ArticleTags.Size = new Size(234, 21);
-			ArticleTags.SplitVal = 65;
+			ArticleTags.Size = new Size(351, 24);
+			ArticleTags.SplitVal = 67;
 			ArticleTags.TabIndex = 3;
 			// 
 			// TextBoldButton
@@ -384,19 +418,20 @@
 			// 
 			// ArticleTitle
 			// 
-			ArticleTitle.Font = new Font("微软雅黑 Consolas", 10.6930695F);
+			ArticleTitle.Font = new Font("微软雅黑 Consolas", 9.267326F, FontStyle.Regular, GraphicsUnit.Point, 134);
 			ArticleTitle.HideText = '\0';
 			ArticleTitle.InputText = "";
 			ArticleTitle.LabelText = "标题";
-			ArticleTitle.Location = new Point(5, 26);
+			ArticleTitle.Location = new Point(4, 31);
 			ArticleTitle.Name = "ArticleTitle";
-			ArticleTitle.Size = new Size(444, 21);
-			ArticleTitle.SplitVal = 66;
+			ArticleTitle.Size = new Size(451, 25);
+			ArticleTitle.SplitVal = 67;
 			ArticleTitle.TabIndex = 1;
 			// 
 			// Article
 			// 
 			Article.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			Article.ContextMenuStrip = AritcleMenu;
 			Article.EnableAutoDragDrop = true;
 			Article.Location = new Point(3, 236);
 			Article.Name = "Article";
@@ -404,6 +439,11 @@
 			Article.TabIndex = 0;
 			Article.Text = "";
 			Article.KeyDown += TextShortcutKey;
+			// 
+			// AritcleMenu
+			// 
+			AritcleMenu.Name = "AritcleMenu";
+			AritcleMenu.Size = new Size(61, 4);
 			// 
 			// AIBox
 			// 
@@ -423,11 +463,11 @@
 			// 
 			PromptPreviewList.ContextMenuStrip = PromptListMenu;
 			PromptPreviewList.FormattingEnabled = true;
-			PromptPreviewList.ItemHeight = 22;
+			PromptPreviewList.ItemHeight = 21;
 			PromptPreviewList.Location = new Point(464, 24);
 			PromptPreviewList.Name = "PromptPreviewList";
 			PromptPreviewList.ScrollAlwaysVisible = true;
-			PromptPreviewList.Size = new Size(434, 136);
+			PromptPreviewList.Size = new Size(434, 130);
 			PromptPreviewList.TabIndex = 4;
 			// 
 			// PromptListMenu
@@ -436,29 +476,29 @@
 			PromptListMenu.Items.AddRange(new ToolStripItem[] { 在上方新增ToolStripMenuItem, 在下方新增ToolStripMenuItem, toolStripSeparator1, 删除ToolStripMenuItem });
 			PromptListMenu.LayoutStyle = ToolStripLayoutStyle.VerticalStackWithOverflow;
 			PromptListMenu.Name = "contextMenuStrip1";
-			PromptListMenu.Size = new Size(144, 82);
+			PromptListMenu.Size = new Size(137, 76);
 			// 
 			// 在上方新增ToolStripMenuItem
 			// 
 			在上方新增ToolStripMenuItem.Name = "在上方新增ToolStripMenuItem";
-			在上方新增ToolStripMenuItem.Size = new Size(143, 24);
+			在上方新增ToolStripMenuItem.Size = new Size(136, 22);
 			在上方新增ToolStripMenuItem.Text = "在上方新增";
 			// 
 			// 在下方新增ToolStripMenuItem
 			// 
 			在下方新增ToolStripMenuItem.Name = "在下方新增ToolStripMenuItem";
-			在下方新增ToolStripMenuItem.Size = new Size(143, 24);
+			在下方新增ToolStripMenuItem.Size = new Size(136, 22);
 			在下方新增ToolStripMenuItem.Text = "在下方新增";
 			// 
 			// toolStripSeparator1
 			// 
 			toolStripSeparator1.Name = "toolStripSeparator1";
-			toolStripSeparator1.Size = new Size(140, 6);
+			toolStripSeparator1.Size = new Size(133, 6);
 			// 
 			// 删除ToolStripMenuItem
 			// 
 			删除ToolStripMenuItem.Name = "删除ToolStripMenuItem";
-			删除ToolStripMenuItem.Size = new Size(143, 24);
+			删除ToolStripMenuItem.Size = new Size(136, 22);
 			删除ToolStripMenuItem.Text = "删除";
 			// 
 			// PromptSettingButton
@@ -558,11 +598,11 @@
 			// PageLinkListBox
 			// 
 			PageLinkListBox.FormattingEnabled = true;
-			PageLinkListBox.ItemHeight = 22;
+			PageLinkListBox.ItemHeight = 21;
 			PageLinkListBox.Location = new Point(8, 61);
 			PageLinkListBox.Name = "PageLinkListBox";
 			PageLinkListBox.ScrollAlwaysVisible = true;
-			PageLinkListBox.Size = new Size(450, 114);
+			PageLinkListBox.Size = new Size(450, 109);
 			PageLinkListBox.TabIndex = 1;
 			PageLinkListBox.SelectedIndexChanged += PageLinkListBox_SelectedIndexChanged;
 			// 
@@ -593,7 +633,7 @@
 			// 
 			UserSignTextBox.Dock = DockStyle.Top;
 			UserSignTextBox.Font = new Font("微软雅黑 Consolas", 7.841584F, FontStyle.Regular, GraphicsUnit.Point, 134);
-			UserSignTextBox.Location = new Point(3, 26);
+			UserSignTextBox.Location = new Point(3, 25);
 			UserSignTextBox.Multiline = true;
 			UserSignTextBox.Name = "UserSignTextBox";
 			UserSignTextBox.Size = new Size(262, 112);
@@ -627,26 +667,26 @@
 			menuStrip1.Location = new Point(0, 0);
 			menuStrip1.Name = "menuStrip1";
 			menuStrip1.Padding = new Padding(7, 2, 0, 2);
-			menuStrip1.Size = new Size(1584, 34);
+			menuStrip1.Size = new Size(1584, 33);
 			menuStrip1.TabIndex = 3;
 			menuStrip1.Text = "menuStrip1";
 			// 
 			// 文件ToolStripMenuItem
 			// 
 			文件ToolStripMenuItem.Name = "文件ToolStripMenuItem";
-			文件ToolStripMenuItem.Size = new Size(62, 30);
+			文件ToolStripMenuItem.Size = new Size(60, 29);
 			文件ToolStripMenuItem.Text = "文件";
 			// 
 			// 设定ToolStripMenuItem
 			// 
 			设定ToolStripMenuItem.Name = "设定ToolStripMenuItem";
-			设定ToolStripMenuItem.Size = new Size(62, 30);
+			设定ToolStripMenuItem.Size = new Size(60, 29);
 			设定ToolStripMenuItem.Text = "设定";
 			// 
 			// 关于ToolStripMenuItem
 			// 
 			关于ToolStripMenuItem.Name = "关于ToolStripMenuItem";
-			关于ToolStripMenuItem.Size = new Size(62, 30);
+			关于ToolStripMenuItem.Size = new Size(60, 29);
 			关于ToolStripMenuItem.Text = "关于";
 			// 
 			// LinkListMenu
@@ -654,29 +694,29 @@
 			LinkListMenu.ImageScalingSize = new Size(17, 17);
 			LinkListMenu.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem2, toolStripSeparator2, toolStripMenuItem3 });
 			LinkListMenu.Name = "contextMenuStrip1";
-			LinkListMenu.Size = new Size(144, 82);
+			LinkListMenu.Size = new Size(137, 76);
 			// 
 			// toolStripMenuItem1
 			// 
 			toolStripMenuItem1.Name = "toolStripMenuItem1";
-			toolStripMenuItem1.Size = new Size(143, 24);
+			toolStripMenuItem1.Size = new Size(136, 22);
 			toolStripMenuItem1.Text = "在上方新增";
 			// 
 			// toolStripMenuItem2
 			// 
 			toolStripMenuItem2.Name = "toolStripMenuItem2";
-			toolStripMenuItem2.Size = new Size(143, 24);
+			toolStripMenuItem2.Size = new Size(136, 22);
 			toolStripMenuItem2.Text = "在下方新增";
 			// 
 			// toolStripSeparator2
 			// 
 			toolStripSeparator2.Name = "toolStripSeparator2";
-			toolStripSeparator2.Size = new Size(140, 6);
+			toolStripSeparator2.Size = new Size(133, 6);
 			// 
 			// toolStripMenuItem3
 			// 
 			toolStripMenuItem3.Name = "toolStripMenuItem3";
-			toolStripMenuItem3.Size = new Size(143, 24);
+			toolStripMenuItem3.Size = new Size(136, 22);
 			toolStripMenuItem3.Text = "删除";
 			// 
 			// UploadButton
@@ -691,6 +731,7 @@
 			// 
 			// PageProcessBox
 			// 
+			PageProcessBox.Controls.Add(FullAutoMode);
 			PageProcessBox.Controls.Add(SkipAI);
 			PageProcessBox.Controls.Add(ArticleGenerateLog);
 			PageProcessBox.Controls.Add(label1);
@@ -704,6 +745,16 @@
 			PageProcessBox.TabIndex = 5;
 			PageProcessBox.TabStop = false;
 			PageProcessBox.Text = "链接处理";
+			// 
+			// FullAutoMode
+			// 
+			FullAutoMode.AutoSize = true;
+			FullAutoMode.Location = new Point(639, 158);
+			FullAutoMode.Name = "FullAutoMode";
+			FullAutoMode.Size = new Size(260, 26);
+			FullAutoMode.TabIndex = 10;
+			FullAutoMode.Text = "全自动模式(实验性,风险自担)";
+			FullAutoMode.UseVisualStyleBackColor = true;
 			// 
 			// SkipAI
 			// 
@@ -722,7 +773,7 @@
 			ArticleGenerateLog.FormattingEnabled = true;
 			ArticleGenerateLog.Location = new Point(8, 61);
 			ArticleGenerateLog.Name = "ArticleGenerateLog";
-			ArticleGenerateLog.Size = new Size(619, 123);
+			ArticleGenerateLog.Size = new Size(619, 116);
 			ArticleGenerateLog.TabIndex = 8;
 			ArticleGenerateLog.DoubleClick += ArticleGenerateLog_DoubleClick;
 			// 
@@ -738,30 +789,30 @@
 			// PageDivClassList
 			// 
 			PageDivClassList.FormattingEnabled = true;
-			PageDivClassList.ItemHeight = 22;
-			PageDivClassList.Items.AddRange(new object[] { "white-wrap", "contentbox" });
+			PageDivClassList.ItemHeight = 21;
+			PageDivClassList.Items.AddRange(new object[] { "white-wrap", "contentbox", "consumption-page-gridarea_content" });
 			PageDivClassList.Location = new Point(773, 28);
 			PageDivClassList.Name = "PageDivClassList";
 			PageDivClassList.ScrollAlwaysVisible = true;
-			PageDivClassList.Size = new Size(124, 70);
+			PageDivClassList.Size = new Size(124, 67);
 			PageDivClassList.TabIndex = 5;
 			// 
 			// PageLink
 			// 
-			PageLink.Font = new Font("微软雅黑 Consolas", 9.267326F, FontStyle.Regular, GraphicsUnit.Point, 134);
+			PageLink.Font = new Font("微软雅黑 Consolas", 7.841584F, FontStyle.Regular, GraphicsUnit.Point, 134);
 			PageLink.HideText = '\0';
 			PageLink.InputText = "111";
 			PageLink.LabelText = "链接";
-			PageLink.Location = new Point(6, 22);
+			PageLink.Location = new Point(4, 17);
 			PageLink.Margin = new Padding(2);
 			PageLink.Name = "PageLink";
-			PageLink.Size = new Size(621, 32);
+			PageLink.Size = new Size(623, 40);
 			PageLink.SplitVal = 50;
 			PageLink.TabIndex = 6;
 			// 
 			// PageProcessButton
 			// 
-			PageProcessButton.Location = new Point(765, 154);
+			PageProcessButton.Location = new Point(768, 127);
 			PageProcessButton.Name = "PageProcessButton";
 			PageProcessButton.Size = new Size(135, 31);
 			PageProcessButton.TabIndex = 5;
@@ -772,7 +823,7 @@
 			// DetailChecker
 			// 
 			DetailChecker.AutoSize = true;
-			DetailChecker.Location = new Point(636, 157);
+			DetailChecker.Location = new Point(639, 130);
 			DetailChecker.Name = "DetailChecker";
 			DetailChecker.Size = new Size(131, 26);
 			DetailChecker.TabIndex = 4;
@@ -848,7 +899,7 @@
 			ArticleTimePicker.Format = DateTimePickerFormat.Custom;
 			ArticleTimePicker.Location = new Point(343, 640);
 			ArticleTimePicker.Name = "ArticleTimePicker";
-			ArticleTimePicker.Size = new Size(223, 27);
+			ArticleTimePicker.Size = new Size(223, 26);
 			ArticleTimePicker.TabIndex = 9;
 			// 
 			// TimeRandomizeButton
@@ -864,7 +915,7 @@
 			// 
 			// Form1
 			// 
-			AutoScaleDimensions = new SizeF(9F, 22F);
+			AutoScaleDimensions = new SizeF(8F, 21F);
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = Color.Linen;
 			ClientSize = new Size(1584, 760);
@@ -889,11 +940,11 @@
 			Text = "Laoliu666_QY文章快速填充工具";
 			ArticleBox.ResumeLayout(false);
 			groupBox1.ResumeLayout(false);
-			groupBox1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)ArticlePicturePreview).EndInit();
 			PicPreviewMenu.ResumeLayout(false);
 			PosterGroupBox.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)PosterPictureView).EndInit();
+			PosterPicturePaste.ResumeLayout(false);
 			AIBox.ResumeLayout(false);
 			PromptListMenu.ResumeLayout(false);
 			CaptureBox.ResumeLayout(false);
@@ -984,5 +1035,10 @@
 		private ToolStripMenuItem PreviewImageCopy;
 		private ToolStripMenuItem TransformedPreviewImageCopy;
 		private Button TimeRandomizeButton;
+		private CheckBox FullAutoMode;
+		private Label label3;
+		private ContextMenuStrip PosterPicturePaste;
+		private ToolStripMenuItem 粘贴图像ToolStripMenuItem;
+		private ContextMenuStrip AritcleMenu;
 	}
 }

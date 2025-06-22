@@ -14,4 +14,5 @@ namespace QYArticleUpdater.Main
             Application.Run(new Form1());
         }
     }
+
 }

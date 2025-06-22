@@ -36,9 +36,11 @@
 			// 
 			// PromptText
 			// 
+			PromptText.AllowDrop = true;
 			PromptText.Location = new Point(12, 42);
 			PromptText.Multiline = true;
 			PromptText.Name = "PromptText";
+			PromptText.ScrollBars = ScrollBars.Vertical;
 			PromptText.Size = new Size(776, 355);
 			PromptText.TabIndex = 0;
 			PromptText.TextChanged += PromptText_TextChanged;
