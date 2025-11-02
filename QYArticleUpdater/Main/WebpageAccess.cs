@@ -35,13 +35,18 @@ namespace QYArticleUpdater.Main
 			var nodes = document.DocumentNode.SelectNodes($"//div[@class='{className}']");
 			if (nodes == null)
 			{
+				nodes = document.DocumentNode.SelectNodes($"//div[@id='{className}']");
+			}
+			if (nodes == null)
+			{
 				return string.Empty;
 			}
 
 			string textContent = string.Join(" ", nodes.Select(node => node.InnerText.Trim()));
 			return textContent;
 		}
-		public Image[] GetImages(string html, string className) 
+
+		public async Task<Image[]> GetImages(string url, string html, string className) 
 		{
 			HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
 			document.LoadHtml(html);
@@ -49,11 +54,16 @@ namespace QYArticleUpdater.Main
 			var nodes = document.DocumentNode.SelectNodes($"//div[@class='{className}']");
 			if (nodes == null)
 			{
+				nodes = document.DocumentNode.SelectNodes($"//div[@id='{className}']");
+			}
+			if (nodes == null)
+			{
 				return Array.Empty<Image>();
 			}
 
 			List<Image> images = new List<Image>();
-
+			int pictureIndex = ContentMatch.GetPictureIndex(url);
+			var imgSuffixPatterns = new char[] { '!','@','?' };
 			foreach (var node in nodes)
 			{
 				var imgNodes = node.SelectNodes(".//img");
@@ -61,15 +71,44 @@ namespace QYArticleUpdater.Main
 				{
 					foreach (var imgNode in imgNodes)
 					{
+
 						var srcAttr = imgNode.Attributes["src"];
 						if (srcAttr != null && !string.IsNullOrEmpty(srcAttr.Value))
 						{
 							string cleanUrl = CleanImageUrl(srcAttr.Value);
+							if (cleanUrl.StartsWith("//"))
+							{
+								cleanUrl = "https:" + cleanUrl;
+							}
+							if (cleanUrl.StartsWith("file"))
+							{
+								cleanUrl = "https:" + cleanUrl.Substring(5);
+							}
+							if (cleanUrl.Contains("ali213"))
+							{
+								cleanUrl = cleanUrl.Replace("584_", string.Empty);
+							}
+							foreach (var suffix in imgSuffixPatterns)
+							{
+								if (cleanUrl.Contains(suffix))
+								{
+									cleanUrl = cleanUrl.Split(suffix)[0];
+								}
+							}
 							try
 							{
-								using (WebClient client = new WebClient())
+								using (HttpClient client = new HttpClient())
 								{
-									byte[] imageData = client.DownloadData(cleanUrl);
+									client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+									//client.DefaultRequestHeaders.Referrer = new Uri("https://www.example.com");
+									client.DefaultRequestHeaders.Accept.ParseAdd("image/avif,image/jpeg,image/apng,image/*,*/*;q=0.8");
+									client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("image/jpeg"));
+									client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("zh-CN,zh;q=0.9");
+									HttpResponseMessage response = await client.GetAsync(cleanUrl);
+									string contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
+									long? contentLength = response.Content.Headers.ContentLength;
+									Console.WriteLine($"ContentType: {contentType}, ContentLength: {contentLength}");
+									byte[] imageData = await client.GetByteArrayAsync(cleanUrl);
 									using (MemoryStream ms = new MemoryStream(imageData))
 									{
 										images.Add(Image.FromStream(ms));
@@ -84,6 +123,10 @@ namespace QYArticleUpdater.Main
 						}
 					}
 				}
+			}
+			if (pictureIndex > 0)
+			{
+				images.RemoveRange(0, Math.Min(pictureIndex, images.Count));
 			}
 
 			return images.ToArray();

@@ -169,7 +169,13 @@ namespace QYArticleUpdater
 			}
 
 		}
-
+		public void LoadImage(Image image)
+		{
+			PictureInput.Image = image;
+			img = PictureInput.Image;
+			PictureInput.Size = img.Size;
+			PictureInput_BackgroundImageChanged();
+		}
 		private void Generator_Click(object sender, EventArgs e)
 		{
 			// 确保有图像要处理
@@ -596,5 +602,14 @@ namespace QYArticleUpdater
 			copycomplete.Visible = false;
 		}
 		#endregion
+
+		private void ReturnImageButton_Click(object sender, EventArgs e)
+		{
+			Image image = PictureInput.Image;
+			if (image != null)
+			{
+				PicTransmission(new Image[] { image });
+			}
+		}
 	}
 }

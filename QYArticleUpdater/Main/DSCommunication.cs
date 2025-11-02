@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QYArticleUpdater.FileRW;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
@@ -10,8 +11,9 @@ namespace QYArticleUpdater.Main
 	internal static class DSCommunication
 	{
 		// API配置常量
-		private const string ApiUrl = "https://api.deepseek.com/chat/completions";
-		private const string ApiKey = "Bearer sk-cf17f707cdfb42b987ab7a8754859732";
+		private static readonly string ApiUrl = IniFileConverter.ReadValue("D:\\poster\\UserInfo.ini", "Model", "ModelServerURL");
+		//private const string ApiUrl = "https://api.deepseek.com/chat/completions";
+		private static readonly string ApiKey = "Bearer " + IniFileConverter.ReadValue("D:\\poster\\UserInfo.ini", "UserInfo", "DeepSeekAPIKey");//"Bearer sk-cf17f707cdfb42b987ab7a8754859732";
 
 		// HTTP客户端工厂
 		private static HttpClient _client;
@@ -31,7 +33,7 @@ namespace QYArticleUpdater.Main
 				_client = new HttpClient();
 				_client.DefaultRequestHeaders.Add("Authorization", ApiKey);
 				_client.DefaultRequestHeaders.Add("Accept", "application/json");
-				_client.Timeout = TimeSpan.FromSeconds(120);
+				_client.Timeout = TimeSpan.FromSeconds(150);
 
 				// 初始化新的消息历史
 				_messageHistory = new List<ChatMessage>();
@@ -62,7 +64,7 @@ namespace QYArticleUpdater.Main
 		/// </summary>
 		/// <param name="userMessage">用户消息内容</param>
 		/// <returns>AI生成的回复</returns>
-		public static async Task<string> SendUserMessageAsync(string userMessage)
+		public static async Task<string> SendUserMessageAsync(string roleStr,string userMessage)
 		{
 			if (string.IsNullOrWhiteSpace(userMessage))
 				throw new ArgumentException("User message cannot be empty");
@@ -77,7 +79,7 @@ namespace QYArticleUpdater.Main
 				// 添加用户消息到历史
 				_messageHistory.Add(new ChatMessage
 				{
-					role = "user",
+					role = roleStr,
 					content = userMessage
 				});
 
@@ -88,9 +90,11 @@ namespace QYArticleUpdater.Main
 			// 构建请求体
 			var request = new ChatRequest
 			{
-				model = "deepseek-chat",
+				//model= "deepseek-chat",
+				model = IniFileConverter.ReadValue("D:\\poster\\UserInfo.ini", "Model", "ModelName"),
 				messages = currentMessages,
-				stream = false
+				stream = false,
+				temperature = 0.1f // 设置温度参数，默认为0.1
 			};
 
 			// 发送请求
@@ -143,16 +147,17 @@ namespace QYArticleUpdater.Main
 		// 辅助类：聊天消息
 		private class ChatMessage
 		{
-			public string role { get; set; }
-			public string content { get; set; }
+			public string? role { get; set; }
+			public string? content { get; set; }
 		}
 
 		// 辅助类：API请求结构
 		private class ChatRequest
 		{
-			public string model { get; set; }
-			public ChatMessage[] messages { get; set; }
-			public bool stream { get; set; }
+			public string? model { get; set; }
+			public ChatMessage[]? messages { get; set; }
+			public bool? stream { get; set; }
+			public float? temperature { get; set; } = 0f; // 温度参数，默认为0
 		}
 
 		// 辅助类：API响应结构
